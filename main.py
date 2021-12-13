@@ -25,7 +25,7 @@ def main():
         browser_window.quit()
     # Read file to dataframe.
     tasks_df = pd.read_csv(file_path)
-    # Create data for the first graph => Communication setup (ALl Customers)
+    # Create data for the first graph => Communication setup (ALl Customers).
     # Filter dataframe for rows that are 'Customer' and 'Subject' contains 'Communication setup'.
     comm_setup_all_suppliers_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
@@ -33,12 +33,28 @@ def main():
     ]
     # Create a data series with column '% Done' just for the filtered rows.
     comm_setup_all_suppliers_ds = comm_setup_all_suppliers_df['% Done']
-    counting_percentages_ds = comm_setup_all_suppliers_ds.value_counts(ascending=True)
+    counting_percentages_comm_setup_ds = comm_setup_all_suppliers_ds.value_counts(ascending=True)
     graph_1_x = []
     graph_1_y = []
-    for row in counting_percentages_ds.iteritems():
+    for row in counting_percentages_comm_setup_ds.iteritems():
         graph_1_x.append(row[0])
         graph_1_y.append(row[1])
+    print(graph_1_x)
+    print(graph_1_y)
+    # Create data for the second graph => Customer IN (All customers).
+    costumer_in_df = tasks_df[
+        (tasks_df['Planio Label 1'] == 'Customer') &
+        (tasks_df['Subject'].str.contains('IN - mapping'))
+    ]
+    customer_in_ds = costumer_in_df['% Done']
+    counting_percentages_custumer_in_ds = customer_in_ds.value_counts(ascending=True)
+    graph_2_x = []
+    graph_2_y = []
+    for row in counting_percentages_custumer_in_ds.iteritems():
+        graph_2_x.append(row[0])
+        graph_2_y.append(row[1])
+    print(graph_2_x)
+    print(graph_2_y)
     return
 
 
