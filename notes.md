@@ -2,6 +2,7 @@
 * Check that the medium value is correct.
 * Create some space between the figure title and the graphs (padding).
 * Add the traffic light image to the figure.
+* Add the traffic light dot at the right upper corner using the graph coordinates and not the ticks.
 
 # New features
 * Series.index, returns the index of the series in an array.

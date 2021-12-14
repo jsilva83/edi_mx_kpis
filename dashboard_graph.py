@@ -32,12 +32,12 @@ class DrawDashboard:
         # )
         self.my_figure = plot.figure(figsize=(in_fig_size_width, in_fig_size_height))
         self.my_axes = []
-        self.my_axes.append(plot.subplot2grid((2, 4), (0, 0)))
-        self.my_axes.append(plot.subplot2grid((2, 4), (0, 1)))
-        self.my_axes.append(plot.subplot2grid((2, 4), (0, 2)))
-        self.my_axes.append(plot.subplot2grid((2, 4), (0, 3)))
-        self.my_axes.append(plot.subplot2grid((2, 4), (1, 0)))
-        self.my_axes.append(plot.subplot2grid((2, 4), (1, 1), colspan=3))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 0)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 1)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 2)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 3)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 0)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 1), colspan=3))
         # Set figure's title.
         current_date = datetime.datetime.now()
         self.my_figure.suptitle(in_fig_title + current_date.strftime("%d.%m.%Y, %H:%M:%S"), fontsize=FONT_TITLE_SIZE)
@@ -46,7 +46,7 @@ class DrawDashboard:
 
     def bar_graph(self, in_axe: tuple, in_axe_title: str, in_bar_color: list,
                   in_x_legend: str, in_x_ticks_labels: list, in_x_rotation: int,
-                  in_y_legend: str, in_y_data: list, in_inside_text, col_span=None, row_span=None) -> None:
+                  in_y_legend: str, in_y_data: list, in_inside_text) -> None:
         """Creates the elements to show in a bar graph.\n
         in_axe_index: index number (tuple) of the axes array to be used for the bar graph.\n
         in_axe_title: title of the graph (displayed on top).\n
@@ -78,9 +78,6 @@ class DrawDashboard:
                     )
         return
 
-    # def bar_graph_wit_v_line(self, in_axe_index: tuple, in_axe_title: str, in_bar_color: list, in_x_legend: str,
-    #                          in_x_ticks_labels: list, in_x_rotation: int, in_y_legend: str, in_y_data: list,
-    #                          in_inside_text: str, in_v_line_x: int) -> None:
     def bar_graph_wit_v_line(self, in_axe: tuple, in_axe_title: str, in_bar_color: list, in_x_legend: str,
                              in_x_ticks_labels: list, in_x_rotation: int, in_y_legend: str, in_y_data: list,
                              in_inside_text: str, in_v_line_x: int, in_avg: int) -> None:
