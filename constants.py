@@ -18,4 +18,5 @@ PLAN_IO_QUERY_CUSTOMERS_MX = [
     'FlexNGate',
     'Dortec',
     'ABC',
+    'Chrysler'
 ]

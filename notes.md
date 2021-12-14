@@ -1,3 +1,8 @@
+# Issues
+* Check that the medium value is correct.
+* Create some space between the figure title and the graphs (padding).
+* Add the traffic light image to the figure.
+
 # New features
 * Series.index, returns the index of the series in an array.
 * Series.values, returns the values of the series in an array.
