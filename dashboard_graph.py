@@ -1,5 +1,6 @@
 # Import external packages.
 import matplotlib.pyplot as plot
+from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 import numpy
 import datetime
 import os
@@ -59,6 +60,7 @@ class DrawDashboard:
         in_y_data: the data for each bar (list)."""
         in_axe.set_title(in_axe_title, loc='center', fontdict=FONT_TITLE)
         in_axe.grid(axis='y', linestyle='dotted')
+        in_axe.set_ylim(0, 100)
         # Axe X.
         in_axe.set_xlabel(in_x_legend, fontdict=FONT_XY_LABEL)
         x_ticks_position = numpy.arange(len(in_y_data))
@@ -80,7 +82,7 @@ class DrawDashboard:
 
     def bar_graph_wit_v_line(self, in_axe: tuple, in_axe_title: str, in_bar_color: list, in_x_legend: str,
                              in_x_ticks_labels: list, in_x_rotation: int, in_y_legend: str, in_y_data: list,
-                             in_inside_text: str, in_v_line_x: int, in_avg: int) -> None:
+                             in_inside_text: str, in_v_line_x: int, in_avg: float) -> None:
         """Creates the elements to show in a bar graph.\n
         in_axe_index: index number (tuple) of the axes array to be used for the bar graph.\n
         in_axe_title: title of the graph (displayed on top).\n
@@ -124,11 +126,11 @@ class DrawDashboard:
         a_x = [len(in_x_ticks_labels) - 1]
         a_y = [max(in_y_data)]
         if in_avg < 60.00:
-            in_axe.scatter(a_x, a_y, color='#EE0202', s=80)
+            in_axe.scatter(0.95, 0.95, color='#EE0202', s=120, transform=in_axe.transAxes)
         elif 100 > in_avg >= 60:
-            in_axe.scatter(a_x, a_y, color='#EFF200', s=80)
+            in_axe.scatter(a_x, a_y, color='#EFF200', s=120, transform=in_axe.transAxes)
         else:
-            in_axe.scatter(a_x, a_y, color='#00A301', s=80)
+            in_axe.scatter(a_x, a_y, color='#00A301', s=120, transform=in_axe.transAxes)
         return
 
     @staticmethod
@@ -205,7 +207,7 @@ class DrawDashboard:
         # Axe Y.
         self.my_axes[g_row][g_column].set_ylabel(in_y_legend, fontdict=FONT_XY_LABEL)
         self.my_axes[g_row][g_column].tick_params(axis='y', labelsize=6)
-        # Base line for first bar rect is 0.
+        # Baseline for first bar rect is 0.
         stack_len = len(in_y_data[0])
         bottom_coord = [[0 for _ in range(stack_len)], in_y_data[0]]
         for n in range(2, len(in_y_data)):
@@ -356,8 +358,14 @@ class DrawDashboard:
         self.my_axes[g_row][g_column].set_visible(False)
         return
 
+    def show_traffic_light(self) -> None:
+        image_obj = plot.imread('./images/traffic-light-red.png')
+        self.my_figure.figimage(image_obj, 2000, 1080)
+        return
+
     @staticmethod
     def show_graph() -> None:
+        plot.tight_layout()
         plot.show()
         return
 

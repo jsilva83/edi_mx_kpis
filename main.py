@@ -57,8 +57,8 @@ def main():
     # Axis 'X' values.
     graph_1_x = list(graph_1_ds.index)
     # Axis 'Y' values.
-    graph_1_y = graph_1_ds.values
-    graph_1_avg = round(sum(graph_1_y) / len(graph_1_y))
+    graph_1_y = list(graph_1_ds.values)
+    graph_1_avg = mf.calculate_average(graph_1_x, graph_1_y)
     # Create data for the second graph => Customer IN (All customers).
     costumer_in_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
@@ -71,7 +71,7 @@ def main():
     graph_2_ds = counting_percentages_customer_in_ds.sort_index()
     graph_2_x = list(graph_2_ds.index)
     graph_2_y = graph_2_ds.values
-    graph_2_avg = round(sum(graph_2_y) / len(graph_2_y))
+    graph_2_avg = mf.calculate_average(graph_2_x, graph_2_y)
     # Create data for the third graph => Customer OUT (All customers).
     costumer_out_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
@@ -84,7 +84,7 @@ def main():
     graph_3_ds = counting_percentages_customer_out_ds.sort_index()
     graph_3_x = list(graph_3_ds.index)
     graph_3_y = graph_3_ds.values
-    graph_3_avg = round(sum(graph_3_y) / len(graph_3_y))
+    graph_3_avg = mf.calculate_average(graph_3_x, graph_3_y)
     # Create data for the fourth graph => Supplier IN (All suppliers).
     supplier_in_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Supplier') &
@@ -97,7 +97,7 @@ def main():
     graph_4_ds = counting_percentages_supplier_in_ds.sort_index()
     graph_4_x = list(graph_4_ds.index)
     graph_4_y = graph_4_ds.values
-    graph_4_avg = round(sum(graph_4_y) / len(graph_4_y))
+    graph_4_avg = mf.calculate_average(graph_4_x, graph_4_y)
     # Create data for the fifth graph => Supplier OUT (All suppliers).
     supplier_out_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Supplier') &
@@ -110,7 +110,7 @@ def main():
     graph_5_ds = counting_percentages_supplier_out_ds.sort_index()
     graph_5_x = list(graph_5_ds.index)
     graph_5_y = graph_5_ds.values
-    graph_5_avg = round(sum(graph_5_y) / len(graph_5_y))
+    graph_5_avg = mf.calculate_average(graph_5_x, graph_5_y)
     # Create data for the sixth graph => Progress by customer (all costumers).
     customers_list = constants.PLAN_IO_QUERY_CUSTOMERS_MX
     customers_list.sort()
@@ -126,7 +126,7 @@ def main():
         customer_item_ds = customer_item_df['% Done']
         average_progress = customer_item_ds.mean()
         graph_6_y.append(round(average_progress))
-    graph_6_avg = round(sum(graph_6_y) / len(graph_6_y))
+    graph_6_avg = round(sum(graph_6_y) / len(graph_6_y), 1)
     # Start plotting.
     # Start creating the dashboard and its figure and axes.
     """Creates the figure and axes objects.\n
@@ -164,7 +164,7 @@ def main():
         in_x_rotation=0,
         in_y_legend='# customers',
         in_y_data=graph_2_y,
-        in_inside_text=f'Average: {graph_2_avg}',
+        in_inside_text=f'Average (in %): {graph_2_avg}',
         in_v_line_x=60,
         in_avg=graph_2_avg,
     )
@@ -178,7 +178,7 @@ def main():
         in_x_rotation=0,
         in_y_legend='# customers',
         in_y_data=graph_3_y,
-        in_inside_text=f'Average: {graph_3_avg}',
+        in_inside_text=f'Average (in %): {graph_3_avg}',
         in_v_line_x=60,
         in_avg=graph_3_avg,
     )
@@ -192,7 +192,7 @@ def main():
         in_x_rotation=0,
         in_y_legend='# channels',
         in_y_data=graph_1_y,
-        in_inside_text=f'Average: {graph_1_avg}',
+        in_inside_text=f'Average (in %): {graph_1_avg}',
         in_v_line_x=60,
         in_avg=graph_1_avg,
     )
@@ -206,7 +206,7 @@ def main():
         in_x_rotation=0,
         in_y_legend='# suppliers',
         in_y_data=graph_4_y,
-        in_inside_text=f'Average: {graph_4_avg}',
+        in_inside_text=f'Average (in %): {graph_4_avg}',
         in_v_line_x=60,
         in_avg=graph_4_avg,
     )
@@ -220,7 +220,7 @@ def main():
         in_x_rotation=0,
         in_y_legend='# suppliers',
         in_y_data=graph_5_y,
-        in_inside_text=f'Average: {graph_5_avg}',
+        in_inside_text=f'Average (in %): {graph_5_avg}',
         in_v_line_x=60,
         in_avg=graph_5_avg,
     )
@@ -234,8 +234,10 @@ def main():
         in_x_rotation=0,
         in_y_legend='progress (in %)',
         in_y_data=graph_6_y,
-        in_inside_text=f'Average: {graph_6_avg}'
+        in_inside_text=f'Average (in %): {graph_6_avg}'
     )
+    # Add the traffic light to the image.
+    my_dashboard.show_traffic_light()
     # Save dashboard.
     my_dashboard.save_image()
     # Show graphs.

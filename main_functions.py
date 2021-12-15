@@ -44,3 +44,13 @@ def enter_credentials(browser_window, a_time, user, psw2):
     # wait sometime to build the page
     time.sleep(a_time)
     return
+
+
+def calculate_average(x_list: list, y_list: list) -> float:
+    """Returns a float average of the x_list and y_list values.
+    x_list: list of values representing the % done.
+    y_list: list of values representing the number of occurrences of a value x."""
+    return round(sum([item[0] * item[1] for item in zip(y_list, x_list)]) / sum(y_list), 1)
+
+
+
