@@ -184,23 +184,9 @@ def main():
         in_v_line_x=60,
         in_avg=graph_3_avg,
     )
-    # Display graph in grid position (0, 2)
+    # Display graph in grid position (0, 3)
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[2],
-        in_axe_title='Communications Setup (All)',
-        in_bar_color=BAR_COLOR_BLUE,
-        in_x_legend='progress (in %)',
-        in_x_ticks_labels=graph_1_x,
-        in_x_rotation=0,
-        in_y_legend='# channels',
-        in_y_data=graph_1_y,
-        in_inside_text=f'Average (in %): {graph_1_avg}',
-        in_v_line_x=60,
-        in_avg=graph_1_avg,
-    )
-    # Display graph in grid position (1, 0)
-    my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[3],
         in_axe_title='MX Suppliers IN',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -212,9 +198,9 @@ def main():
         in_v_line_x=60,
         in_avg=graph_4_avg,
     )
-    # Display graph in grid position (1, 1)
+    # Display graph in grid position (0, 3)
     my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[4],
+        in_axe=my_dashboard.my_axes[3],
         in_axe_title='MX Suppliers OUT',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -225,6 +211,20 @@ def main():
         in_inside_text=f'Average (in %): {graph_5_avg}',
         in_v_line_x=60,
         in_avg=graph_5_avg,
+    )
+    # Display graph in grid position (1, 0)
+    my_dashboard.bar_graph_wit_v_line(
+        in_axe=my_dashboard.my_axes[4],
+        in_axe_title='Communications Setup (All)',
+        in_bar_color=BAR_COLOR_BLUE,
+        in_x_legend='progress (in %)',
+        in_x_ticks_labels=graph_1_x,
+        in_x_rotation=0,
+        in_y_legend='# channels',
+        in_y_data=graph_1_y,
+        in_inside_text=f'Average (in %): {graph_1_avg}',
+        in_v_line_x=60,
+        in_avg=graph_1_avg,
     )
     # Display graph in grid position (1, 1)
     my_dashboard.bar_graph(
