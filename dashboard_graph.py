@@ -6,7 +6,7 @@ import datetime
 import os
 
 # Global variables
-FONT_TITLE = {'family': 'arial', 'color': 'black', 'size': 10}
+FONT_TITLE = {'family': 'arial', 'color': 'black', 'size': 9}
 FONT_XY_LABEL = {'family': 'arial', 'color': 'darkred', 'size': 8}
 FONT_INSIDE_TEXT = {'family': 'arial', 'color': 'black', 'size': 8}
 FONT_STACKED_BAR_LABEL = {'family': 'arial', 'color': 'black', 'size': 7}
@@ -20,7 +20,7 @@ PRIORITY_LABELS = ['critical', 'high', 'medium', 'low']
 class DrawDashboard:
 
     def __init__(self, in_n_rows: int, in_n_columns: int, in_fig_size_width: int,
-                 in_fig_size_height: int, in_fig_title: str) -> None:
+                 in_fig_size_height: int, in_fig_title: str, in_avg: float) -> None:
         """Creates the figure and axes objects.\n
         in_n_rows: number of rows for axes grid.\n
         in_n_columns: number of columns for axes grid.\n
@@ -41,7 +41,10 @@ class DrawDashboard:
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 1), colspan=3))
         # Set figure's title.
         current_date = datetime.datetime.now()
-        self.my_figure.suptitle(in_fig_title + current_date.strftime("%d.%m.%Y, %H:%M:%S"), fontsize=FONT_TITLE_SIZE)
+        self.my_figure.suptitle(
+            in_fig_title + current_date.strftime("%d.%m.%Y, %H:%M:%S") + ' - Total average: ' + str(in_avg) + '%',
+            fontsize=FONT_TITLE_SIZE
+        )
         self.my_figure.tight_layout(h_pad=3)
         return
 
@@ -358,9 +361,15 @@ class DrawDashboard:
         self.my_axes[g_row][g_column].set_visible(False)
         return
 
-    def show_traffic_light(self) -> None:
-        image_obj = plot.imread('./images/traffic-light-red.png')
-        self.my_figure.figimage(image_obj, 2000, 1080)
+    def show_traffic_light(self, in_percentage) -> None:
+        if in_percentage < 60:
+            image_obj = plot.imread('./images/traffic-light-red-(100x100).png')
+        elif 60 <= in_percentage < 90:
+            image_obj = plot.imread('./images/traffic-light-yellow-(100x100).png')
+        else:
+            image_obj = plot.imread('./images/traffic-light-green-(100x100).png')
+        # Arguments are x position followed by y position.
+        self.my_figure.figimage(image_obj, 2200, 1500)
         return
 
     @staticmethod
@@ -374,5 +383,5 @@ class DrawDashboard:
         current_date = datetime.datetime.now()
         file_path = os.getenv('USERPROFILE') + '/Downloads/mx_edi_outlook_dashboard(' + \
                     current_date.strftime("%Y%m%d%H%M%S") + ').svg'
-        plot.savefig(file_path, dpi=600, format='svg')
+        plot.savefig(file_path, dpi=200, format='svg')
         return

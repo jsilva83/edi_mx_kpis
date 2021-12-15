@@ -127,6 +127,7 @@ def main():
         average_progress = customer_item_ds.mean()
         graph_6_y.append(round(average_progress))
     graph_6_avg = round(sum(graph_6_y) / len(graph_6_y), 1)
+    global_average = round((graph_1_avg + graph_2_avg + graph_3_avg + graph_4_avg + graph_5_avg) / 5, 1)
     # Start plotting.
     # Start creating the dashboard and its figure and axes.
     """Creates the figure and axes objects.\n
@@ -140,7 +141,8 @@ def main():
         in_n_columns=N_COLUMNS,
         in_fig_size_width=FIG_SIZE_WIDTH,
         in_fig_size_height=FIG_SIZE_HEIGHT,
-        in_fig_title=FIG_TITLE
+        in_fig_title=FIG_TITLE,
+        in_avg=global_average,
     )
     # Display graph in grid position (0, 0)
     """Creates the elements to show in a bar graph.\n
@@ -237,7 +239,7 @@ def main():
         in_inside_text=f'Average (in %): {graph_6_avg}'
     )
     # Add the traffic light to the image.
-    my_dashboard.show_traffic_light()
+    my_dashboard.show_traffic_light(global_average)
     # Save dashboard.
     my_dashboard.save_image()
     # Show graphs.
