@@ -20,13 +20,13 @@
 5. extract values array
 
 # Image code
-import matplotlib.pyplot as plt
-plt.rcParams["figure.figsize"] = [7.00, 3.50]
-plt.rcParams["figure.autolayout"] = True
-im = plt.imread('bird.jpg') # insert local path of the image.
-fig, ax = plt.subplots()
-ax.plot(range(10))
-newax = fig.add_axes([0.8,0.8,0.2,0.2], anchor='NE', zorder=1)
-newax.imshow(im)
-newax.axis('off')
-plt.show()
+  import matplotlib.pyplot as plt
+  plt.rcParams["figure.figsize"] = [7.00, 3.50]
+  plt.rcParams["figure.autolayout"] = True
+  im = plt.imread('bird.jpg') # insert local path of the image.
+  fig, ax = plt.subplots()
+  ax.plot(range(10))
+  newax = fig.add_axes([0.8,0.8,0.2,0.2], anchor='NE', zorder=1)
+  newax.imshow(im)
+  newax.axis('off')
+  plt.show()
