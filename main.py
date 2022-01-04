@@ -23,14 +23,15 @@ BAR_COLOR_DOUBLE = ['red', 'blue']
 
 def main():
     file_path = mf.get_user_downloads_folder() + '\\' + 'issues.csv'
-    a_answer = input('Do you want to download issues file for MX from Seeburger? Enter {Y, N}: ').lower()
+    a_answer = input('Do you want to download issues file for MX from Seeburger? Enter {Y, N}:\n').lower()
     if a_answer == 'y':
+        a_password = input('Enter your password to Seeburger site:\n')
         # Open browser window.
         browser_window = webdriver.Chrome()
         browser_window.get('https://seeburger.plan.io/login?back_url=https%3A%2F%2Fseeburger.plan.io%2F')
         time.sleep(1)
         # Authenticate.
-        mf.enter_credentials(browser_window, 5, 'jorge.silva@huf-group.com', 'YND5hdj.btq@rgc3mxc')
+        mf.enter_credentials(browser_window, 5, 'jorge.silva@huf-group.com', a_password)
         mf.delete_file(file_path)  # if file exists, delete
         browser_window.get(PLAN_IO_QUERY_ALL_TASKS)  # download file issues.csv
         # Wait for file to download.
