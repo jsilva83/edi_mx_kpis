@@ -4,16 +4,18 @@ import time
 import constants
 import main_functions as mf
 import pandas as pd
+from numpy import mean
 # Import internal packages.
 import dashboard_graph
+import pptx_read as ppt
 # Constants.
 PLAN_IO_QUERY_ALL_TASKS = 'https://seeburger.plan.io/projects/cu-21011-20210118/issues.csv?query_id=2056'
 # Figure constants.
-N_ROWS = 2
-N_COLUMNS = 4
+N_ROWS = 3
+N_COLUMNS = 3
 FIG_TITLE = 'EDI/MX Outlook Dashboard - '
-FIG_SIZE_WIDTH = 16
-FIG_SIZE_HEIGHT = 8
+FIG_SIZE_WIDTH = 14
+FIG_SIZE_HEIGHT = 10
 FIG_TITLE_COLOR = ['black']
 # Bar color constants.
 BAR_COLOR_BLUE = ['blue']
@@ -129,6 +131,45 @@ def main():
         graph_6_y.append(round(average_progress))
     graph_6_avg = round(sum(graph_6_y) / len(graph_6_y), 1)
     global_average = round((graph_1_avg + graph_2_avg + graph_3_avg + graph_4_avg + graph_5_avg) / 5, 1)
+    # Prepare the data to 'Data Readiness'
+    a_pptx = ppt.PPTXRead('C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - '
+                          'Status Reports/10JAN2022 - HUF Mexico EDI Status Dashboard.pptx')
+    a_pptx_table_dict_1 = a_pptx.get_table_values(in_slide_nr=1)
+    # Table dictionary output:
+    # {'Inbound/Outbound': {'SD-03': '6.6%', 'FI-02': '84.4%', 'FI-02': '93.9'}, 'Outbound': {'EWM-02': '0.0%'}}
+    a_pptx_table_value_legend_1 = []
+    a_pptx_table_x_1 = []
+    a_pptx_table_y_1 = []
+    a_colors_1 = []
+    for (key1, value1) in a_pptx_table_dict_1.items():
+        a_pptx_table_value_legend_1.append(key1)
+        # Add number of items per color:
+        a_colors_1.append(len(value1.keys()))
+        for (key2, value2) in value1.items():
+            a_pptx_table_x_1.append(key2)
+            a_pptx_table_y_1.append(value2)
+    # Calculate colors.
+    a_pptx_table_colors_1 = []
+    a_pptx_table_colors_1.extend('red' for _ in range(a_colors_1[0]))
+    a_pptx_table_colors_1.extend('blue' for _ in range(a_colors_1[1]))
+    a_pptx_table_dict_2 = a_pptx.get_table_values(in_slide_nr=2)
+    # Table dictionary output:
+    # {'Inbound/Outbound': {'SD-03': '6.6%', 'FI-02': '84.4%', 'FI-02': '93.9'}, 'Outbound': {'EWM-02': '0.0%'}}
+    a_pptx_table_value_legend_2 = []
+    a_pptx_table_x_2 = []
+    a_pptx_table_y_2 = []
+    a_colors_2 = []
+    for (key1, value1) in a_pptx_table_dict_2.items():
+        a_pptx_table_value_legend_2.append(key1)
+        # Add number of items per color:
+        a_colors_2.append(len(value1.keys()))
+        for (key2, value2) in value1.items():
+            a_pptx_table_x_2.append(key2)
+            a_pptx_table_y_2.append(value2)
+    # Calculate colors.
+    a_pptx_table_colors_2 = []
+    a_pptx_table_colors_2.extend('red' for _ in range(a_colors_1[0]))
+    a_pptx_table_colors_2.extend('blue' for _ in range(a_colors_1[1]))
     # Start plotting.
     # Start creating the dashboard and its figure and axes.
     """Creates the figure and axes objects.\n
@@ -158,6 +199,7 @@ def main():
         in_y_data: the data for each bar (list).\n
         in_inside_text: (str) the text to display at the center of the graph.
         in_v_line_x: (int) x coordinate to display a vertical line."""
+    # MX Customer IN.
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[0],
         in_axe_title='MX Customers IN',
@@ -171,7 +213,8 @@ def main():
         in_v_line_x=60,
         in_avg=graph_2_avg,
     )
-    # Display graph in grid position (0, 1)
+    # Display graph in grid position (0, 1).
+    # MX Customer OUT.
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[1],
         in_axe_title='MX Customers OUT',
@@ -185,9 +228,23 @@ def main():
         in_v_line_x=60,
         in_avg=graph_3_avg,
     )
-    # Display graph in grid position (0, 3)
-    my_dashboard.bar_graph_wit_v_line(
+    # Display graph in grid position (0, 2)
+    # MX Data Readiness Customers.
+    my_dashboard.bar_graph(
         in_axe=my_dashboard.my_axes[2],
+        in_axe_title='MX Data Readiness Customers',
+        in_bar_color=a_pptx_table_colors_1,
+        in_x_legend='objects',
+        in_x_ticks_labels=a_pptx_table_x_1,
+        in_x_rotation=45,
+        in_y_legend='% complete',
+        in_y_data=a_pptx_table_y_1,
+        in_inside_text=f'Average (in %): {round(mean(a_pptx_table_y_1), 2)}'
+    )
+    # Display graph in grid position (1, 0).
+    # MX Suppliers IN.
+    my_dashboard.bar_graph_wit_v_line(
+        in_axe=my_dashboard.my_axes[3],
         in_axe_title='MX Suppliers IN',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -199,9 +256,10 @@ def main():
         in_v_line_x=60,
         in_avg=graph_4_avg,
     )
-    # Display graph in grid position (0, 3)
+    # Display graph in grid position (1, 1).
+    # MX Suppliers OUT.
     my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[3],
+        in_axe=my_dashboard.my_axes[4],
         in_axe_title='MX Suppliers OUT',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -213,9 +271,36 @@ def main():
         in_v_line_x=60,
         in_avg=graph_5_avg,
     )
-    # Display graph in grid position (1, 0)
+    # Display graph in grid position (0, 2)
+    # MX Data Readiness Suppliers.
+    my_dashboard.bar_graph(
+        in_axe=my_dashboard.my_axes[5],
+        in_axe_title='MMX Data Readiness Suppliers',
+        in_bar_color=a_pptx_table_colors_2,
+        in_x_legend='objects',
+        in_x_ticks_labels=a_pptx_table_x_2,
+        in_x_rotation=45,
+        in_y_legend='% complete',
+        in_y_data=a_pptx_table_y_2,
+        in_inside_text=f'Average (in %): {round(mean(a_pptx_table_y_2), 2)}'
+    )
+    # Display graph in grid position (2, 0)
+    # MX By Customers.
+    my_dashboard.bar_graph(
+        in_axe=my_dashboard.my_axes[6],
+        in_axe_title='MX By Customers',
+        in_bar_color=BAR_COLOR_DOUBLE,
+        in_x_legend='customers',
+        in_x_ticks_labels=graph_6_x,
+        in_x_rotation=0,
+        in_y_legend='progress (in %)',
+        in_y_data=graph_6_y,
+        in_inside_text=f'Average (in %): {graph_6_avg}'
+    )
+    # Display graph in grid position (2, 1)
+    # Communications Setup (All).
     my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[4],
+        in_axe=my_dashboard.my_axes[7],
         in_axe_title='Communications Setup (All)',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -226,18 +311,6 @@ def main():
         in_inside_text=f'Average (in %): {graph_1_avg}',
         in_v_line_x=60,
         in_avg=graph_1_avg,
-    )
-    # Display graph in grid position (1, 1)
-    my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[5],
-        in_axe_title='MX By Customers',
-        in_bar_color=BAR_COLOR_DOUBLE,
-        in_x_legend='customers',
-        in_x_ticks_labels=graph_6_x,
-        in_x_rotation=0,
-        in_y_legend='progress (in %)',
-        in_y_data=graph_6_y,
-        in_inside_text=f'Average (in %): {graph_6_avg}'
     )
     # Add the traffic light to the image.
     my_dashboard.show_traffic_light(global_average)

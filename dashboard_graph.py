@@ -1,6 +1,6 @@
 # Import external packages.
 import matplotlib.pyplot as plot
-from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
+# from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 import numpy
 import datetime
 import os
@@ -36,9 +36,11 @@ class DrawDashboard:
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 0)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 1)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 2)))
-        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 3)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 0)))
-        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 1), colspan=3))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 1)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 2)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (2, 0), colspan=2))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (2, 2)))
         # Set figure's title.
         current_date = datetime.datetime.now()
         self.my_figure.suptitle(
@@ -196,7 +198,7 @@ class DrawDashboard:
         in_x_ticks_labels: labels to display on x ticks (list of str).\n
         in_y_legend: legend of the Y axis (str).\n
         in_y_data: the data for each bar (list of lists).\n
-        in_stack_categories: the categories to stack (1. Very High, 2. High, etc).\n
+        in_stack_categories: the categories to stack (1. Very High, 2. High, etc.).\n
         in_inside_text: the text to insert inline with the graph."""
         g_row = in_axe_index[0]
         g_column = in_axe_index[1]
@@ -261,7 +263,7 @@ class DrawDashboard:
         in_x_ticks_labels: labels to display on x ticks (list of str).\n
         in_y_legend: legend of the Y axis (str).\n
         in_y_data: (list(list)) the data for each bar (list of lists).\n
-        in_stack_categories: the categories to stack (1. Very High, 2. High, etc).\n
+        in_stack_categories: the categories to stack (1. Very High, 2. High, etc.).\n
         in_inside_text: (str) the text to insert inline with the graph.\n
         in_y_of_horizontal_lines: (list) the y value for each horizontal line."""
         # Rectangular vertical box plot
@@ -272,7 +274,7 @@ class DrawDashboard:
         # Set graph title and y grid.
         self.my_axes[g_row][g_column].set_title(in_axe_title, loc='center', fontdict=FONT_TITLE)
         self.my_axes[g_row][g_column].grid(axis='y', linestyle='dotted')
-        # Format dictionary the fliers data.
+        # Format dictionary the flier's data.
         red_outliers_props_dict = dict(markerfacecolor='red', marker='o', markeredgecolor='white', alpha=0.5)
         # Format dictionary for the box.
         box_props_dict = dict(color='black')
@@ -369,7 +371,7 @@ class DrawDashboard:
         else:
             image_obj = plot.imread('./images/traffic-light-green-(100x100).png')
         # Arguments are x position followed by y position.
-        self.my_figure.figimage(image_obj, 2200, 1500)
+        self.my_figure.figimage(image_obj, 2000, 1900)
         return
 
     @staticmethod
@@ -381,7 +383,7 @@ class DrawDashboard:
     @staticmethod
     def save_image() -> None:
         current_date = datetime.datetime.now()
-        file_path = os.getenv('USERPROFILE') + '/Downloads/mx_edi_outlook_dashboard(' + \
-                    current_date.strftime("%Y%m%d%H%M%S") + ').svg'
+        file_path = os.getenv('USERPROFILE') + '/Downloads/mx_edi_outlook_dashboard(' \
+                    + current_date.strftime("%Y%m%d%H%M%S") + ').svg'
         plot.savefig(file_path, dpi=200, format='svg')
         return
