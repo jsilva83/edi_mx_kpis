@@ -202,14 +202,14 @@ def main():
     # MX Customer IN.
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[0],
-        in_axe_title='MX Customers IN',
+        in_axe_title=f'MX Customers IN - Avg: {graph_2_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
         in_x_ticks_labels=graph_2_x,
         in_x_rotation=0,
         in_y_legend='# customers',
         in_y_data=graph_2_y,
-        in_inside_text=f'Average (in %): {graph_2_avg}',
+        in_inside_text=f'',
         in_v_line_x=60,
         in_avg=graph_2_avg,
     )
@@ -217,14 +217,14 @@ def main():
     # MX Customer OUT.
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[1],
-        in_axe_title='MX Customers OUT',
+        in_axe_title=f'MX Customers OUT - Avg: {graph_3_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
         in_x_ticks_labels=graph_3_x,
         in_x_rotation=0,
         in_y_legend='# customers',
         in_y_data=graph_3_y,
-        in_inside_text=f'Average (in %): {graph_3_avg}',
+        in_inside_text=f'',
         in_v_line_x=60,
         in_avg=graph_3_avg,
     )
@@ -232,27 +232,27 @@ def main():
     # MX Data Readiness Customers.
     my_dashboard.bar_graph(
         in_axe=my_dashboard.my_axes[2],
-        in_axe_title='MX Data Readiness Customers',
+        in_axe_title=f'MX Data Readiness Customers - Avg: {round(mean(a_pptx_table_y_1), 2)}%',
         in_bar_color=a_pptx_table_colors_1,
         in_x_legend='objects',
         in_x_ticks_labels=a_pptx_table_x_1,
         in_x_rotation=45,
         in_y_legend='% complete',
         in_y_data=a_pptx_table_y_1,
-        in_inside_text=f'Average (in %): {round(mean(a_pptx_table_y_1), 2)}'
+        in_inside_text=f''
     )
     # Display graph in grid position (1, 0).
     # MX Suppliers IN.
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[3],
-        in_axe_title='MX Suppliers IN',
+        in_axe_title=f'MX Suppliers IN - Avg: {graph_4_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
         in_x_ticks_labels=graph_4_x,
         in_x_rotation=0,
         in_y_legend='# suppliers',
         in_y_data=graph_4_y,
-        in_inside_text=f'Average (in %): {graph_4_avg}',
+        in_inside_text=f'',
         in_v_line_x=60,
         in_avg=graph_4_avg,
     )
@@ -260,14 +260,14 @@ def main():
     # MX Suppliers OUT.
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[4],
-        in_axe_title='MX Suppliers OUT',
+        in_axe_title=f'MX Suppliers OUT - Avg: {graph_5_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
         in_x_ticks_labels=graph_5_x,
         in_x_rotation=0,
         in_y_legend='# suppliers',
         in_y_data=graph_5_y,
-        in_inside_text=f'Average (in %): {graph_5_avg}',
+        in_inside_text=f'',
         in_v_line_x=60,
         in_avg=graph_5_avg,
     )
@@ -275,40 +275,44 @@ def main():
     # MX Data Readiness Suppliers.
     my_dashboard.bar_graph(
         in_axe=my_dashboard.my_axes[5],
-        in_axe_title='MMX Data Readiness Suppliers',
+        in_axe_title=f'MMX Data Readiness Suppliers - Avg: {round(mean(a_pptx_table_y_2), 2)}%',
         in_bar_color=a_pptx_table_colors_2,
         in_x_legend='objects',
         in_x_ticks_labels=a_pptx_table_x_2,
         in_x_rotation=45,
         in_y_legend='% complete',
         in_y_data=a_pptx_table_y_2,
-        in_inside_text=f'Average (in %): {round(mean(a_pptx_table_y_2), 2)}'
+        in_inside_text=f''
     )
     # Display graph in grid position (2, 0)
     # MX By Customers.
+    # TODO: Color in red the most important customers at left side.
+    a_bar_colors = []
+    a_bar_colors.extend('red' for _ in range(8))
+    a_bar_colors.extend('blue' for _ in range(12))
     my_dashboard.bar_graph(
         in_axe=my_dashboard.my_axes[6],
-        in_axe_title='MX By Customers',
+        in_axe_title=f'MX By Customers - Avg: {graph_6_avg}%',
         in_bar_color=BAR_COLOR_DOUBLE,
         in_x_legend='customers',
         in_x_ticks_labels=graph_6_x,
         in_x_rotation=0,
         in_y_legend='progress (in %)',
         in_y_data=graph_6_y,
-        in_inside_text=f'Average (in %): {graph_6_avg}'
+        in_inside_text=f''
     )
     # Display graph in grid position (2, 1)
     # Communications Setup (All).
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[7],
-        in_axe_title='Communications Setup (All)',
+        in_axe_title=f'Communications Setup (All) - Avg: {graph_1_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
         in_x_ticks_labels=graph_1_x,
         in_x_rotation=0,
         in_y_legend='# channels',
         in_y_data=graph_1_y,
-        in_inside_text=f'Average (in %): {graph_1_avg}',
+        in_inside_text=f'',
         in_v_line_x=60,
         in_avg=graph_1_avg,
     )
