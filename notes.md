@@ -1,8 +1,5 @@
 # Issues
-* Check that the medium value is correct.
-* Create some space between the figure title and the graphs (padding).
-* Add the traffic light image to the figure.
-* Add the traffic light dot at the right upper corner using the graph coordinates and not the ticks.
+* No issues.
 
 # New features
 * Series.index, returns the index of the series in an array.
@@ -13,11 +10,7 @@
 * Series.sort_index, reindex series based on index.
 
 # Pseudocode
-1. if 60 value not in index:
-2. add value = 0 with index = 60
-3. sort the series using index
-4. extract index array
-5. extract values array
+1. ??
 
 # Image code
 `import matplotlib.pyplot as plt`

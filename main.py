@@ -116,7 +116,7 @@ def main():
     graph_5_avg = mf.calculate_average(graph_5_x, graph_5_y)
     # Create data for the sixth graph => Progress by customer (all costumers).
     customers_list = constants.PLAN_IO_QUERY_CUSTOMERS_MX
-    customers_list.sort()
+    # customers_list.sort()
     # Prepare the output lists for graph 6.
     graph_6_x = customers_list
     graph_6_y = []
@@ -133,7 +133,7 @@ def main():
     global_average = round((graph_1_avg + graph_2_avg + graph_3_avg + graph_4_avg + graph_5_avg) / 5, 1)
     # Prepare the data to 'Data Readiness'
     a_pptx = ppt.PPTXRead('C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - '
-                          'Status Reports/10JAN2022 - HUF Mexico EDI Status Dashboard.pptx')
+                          'Status Reports/17JAN2022 - HUF Mexico EDI Status Dashboard.pptx')
     a_pptx_table_dict_1 = a_pptx.get_table_values(in_slide_nr=1)
     # Table dictionary output:
     # {'Inbound/Outbound': {'SD-03': '6.6%', 'FI-02': '84.4%', 'FI-02': '93.9'}, 'Outbound': {'EWM-02': '0.0%'}}
@@ -286,14 +286,13 @@ def main():
     )
     # Display graph in grid position (2, 0)
     # MX By Customers.
-    # TODO: Color in red the most important customers at left side.
     a_bar_colors = []
     a_bar_colors.extend('red' for _ in range(8))
-    a_bar_colors.extend('blue' for _ in range(12))
+    a_bar_colors.extend('blue' for _ in range(13))
     my_dashboard.bar_graph(
         in_axe=my_dashboard.my_axes[6],
         in_axe_title=f'MX By Customers - Avg: {graph_6_avg}%',
-        in_bar_color=BAR_COLOR_DOUBLE,
+        in_bar_color=a_bar_colors,
         in_x_legend='customers',
         in_x_ticks_labels=graph_6_x,
         in_x_rotation=0,
