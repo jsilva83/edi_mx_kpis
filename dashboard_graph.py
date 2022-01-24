@@ -44,7 +44,8 @@ class DrawDashboard:
         # Set figure's title.
         current_date = datetime.datetime.now()
         self.my_figure.suptitle(
-            in_fig_title + current_date.strftime("%d.%m.%Y, %H:%M:%S") + ' - Total average: ' + str(in_avg) + '%',
+            in_fig_title + current_date.strftime("%d.%m.%Y, %H:%M:%S") + '(UTC+0) - Total average: '
+            + str(in_avg) + '%',
             fontsize=FONT_TITLE_SIZE
         )
         self.my_figure.tight_layout(h_pad=3)
@@ -371,7 +372,7 @@ class DrawDashboard:
         else:
             image_obj = plot.imread('./images/traffic-light-green-(100x100).png')
         # Arguments are x position followed by y position.
-        self.my_figure.figimage(image_obj, 2000, 1900)
+        self.my_figure.figimage(image_obj, 2030, 1900)
         return
 
     @staticmethod

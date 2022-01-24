@@ -133,7 +133,7 @@ def main():
     global_average = round((graph_1_avg + graph_2_avg + graph_3_avg + graph_4_avg + graph_5_avg) / 5, 1)
     # Prepare the data to 'Data Readiness'
     a_pptx = ppt.PPTXRead('C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - '
-                          'Status Reports/17JAN2022 - HUF Mexico EDI Status Dashboard.pptx')
+                          'Status Reports/24JAN2022 - HUF Mexico EDI Status Dashboard.pptx')
     a_pptx_table_dict_1 = a_pptx.get_table_values(in_slide_nr=1)
     # Table dictionary output:
     # {'Inbound/Outbound': {'SD-03': '6.6%', 'FI-02': '84.4%', 'FI-02': '93.9'}, 'Outbound': {'EWM-02': '0.0%'}}
