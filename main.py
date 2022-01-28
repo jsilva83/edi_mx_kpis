@@ -5,11 +5,14 @@ import constants
 import main_functions as mf
 import pandas as pd
 from numpy import mean
+import os
 # Import internal packages.
 import dashboard_graph
 import pptx_read as ppt
 # Constants.
 PLAN_IO_QUERY_ALL_TASKS = 'https://seeburger.plan.io/projects/cu-21011-20210118/issues.csv?query_id=2056'
+SNP_STATUS_REPORT = 'C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - ' \
+                    'Status Reports/24JAN2022 - HUF Mexico EDI Status Dashboard.pptx'
 # Figure constants.
 N_ROWS = 3
 N_COLUMNS = 3
@@ -27,6 +30,9 @@ def main():
     file_path = mf.get_user_downloads_folder() + '\\' + 'issues.csv'
     a_answer = input('Do you want to download issues file for MX from Seeburger? Enter {Y, N}:\n').lower()
     if a_answer == 'y':
+        # Check that file 'issues.csv' exist and delete it.
+        if os.path.isfile(file_path):
+            os.remove(file_path)
         a_password = input('Enter your password to Seeburger site:\n')
         # Open browser window.
         browser_window = webdriver.Chrome()
@@ -131,9 +137,8 @@ def main():
         graph_6_y.append(round(average_progress))
     graph_6_avg = round(sum(graph_6_y) / len(graph_6_y), 1)
     global_average = round((graph_1_avg + graph_2_avg + graph_3_avg + graph_4_avg + graph_5_avg) / 5, 1)
-    # Prepare the data to 'Data Readiness'
-    a_pptx = ppt.PPTXRead('C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - '
-                          'Status Reports/24JAN2022 - HUF Mexico EDI Status Dashboard.pptx')
+    # Prepare the data to compute the 'Data Readiness' from SNP Status Report.
+    a_pptx = ppt.PPTXRead(SNP_STATUS_REPORT)
     a_pptx_table_dict_1 = a_pptx.get_table_values(in_slide_nr=1)
     # Table dictionary output:
     # {'Inbound/Outbound': {'SD-03': '6.6%', 'FI-02': '84.4%', 'FI-02': '93.9'}, 'Outbound': {'EWM-02': '0.0%'}}
