@@ -51,10 +51,11 @@ class DrawDashboard:
         self.my_figure.tight_layout(h_pad=3)
         return
 
-    def bar_graph(self, in_axe: tuple, in_axe_title: str, in_bar_color: list,
+    def bar_graph(self, in_axe, in_axe_title: str, in_bar_color: list,
                   in_x_legend: str, in_x_ticks_labels: list, in_x_rotation: int,
                   in_y_legend: str, in_y_data: list, in_inside_text) -> None:
         """Creates the elements to show in a bar graph.\n
+        in_axe:
         in_axe_index: index number (tuple) of the axes array to be used for the bar graph.\n
         in_axe_title: title of the graph (displayed on top).\n
         in_bar_color: color (str) or list of colors (list of str).\n
@@ -86,7 +87,7 @@ class DrawDashboard:
                     )
         return
 
-    def bar_graph_wit_v_line(self, in_axe: tuple, in_axe_title: str, in_bar_color: list, in_x_legend: str,
+    def bar_graph_wit_v_line(self, in_axe, in_axe_title: str, in_bar_color: list, in_x_legend: str,
                              in_x_ticks_labels: list, in_x_rotation: int, in_y_legend: str, in_y_data: list,
                              in_inside_text: str, in_v_line_x: int, in_avg: float) -> None:
         """Creates the elements to show in a bar graph.\n

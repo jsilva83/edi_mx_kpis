@@ -12,7 +12,7 @@ import pptx_read as ppt
 # Constants.
 PLAN_IO_QUERY_ALL_TASKS = 'https://seeburger.plan.io/projects/cu-21011-20210118/issues.csv?query_id=2056'
 SNP_STATUS_REPORT = 'C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - ' \
-                    'Status Reports/24JAN2022 - HUF Mexico EDI Status Dashboard.pptx'
+                    'Status Reports/31JAN2022 - HUF Mexico EDI Status Dashboard.pptx'
 # Figure constants.
 N_ROWS = 3
 N_COLUMNS = 3
