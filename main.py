@@ -12,7 +12,7 @@ import pptx_read as ppt
 # Constants.
 PLAN_IO_QUERY_ALL_TASKS = 'https://seeburger.plan.io/projects/cu-21011-20210118/issues.csv?query_id=2056'
 SNP_STATUS_REPORT = 'C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - ' \
-                    'Status Reports/31JAN2022 - HUF Mexico EDI Status Dashboard.pptx'
+                    'Status Reports/07FEB2022 - HUF Mexico EDI Status Dashboard.pptx'
 # Figure constants.
 N_ROWS = 3
 N_COLUMNS = 3
@@ -69,10 +69,19 @@ def main():
     graph_1_y = list(graph_1_ds.values)
     graph_1_avg = mf.calculate_average(graph_1_x, graph_1_y)
     # Create data for the second graph => Customer IN (All customers).
+    # Version 1.0.
+    # costumer_in_df = tasks_df[
+    #     (tasks_df['Planio Label 1'] == 'Customer') &
+    #     (tasks_df['Subject'].str.contains('IN - mapping'))
+    # ]
+    # TODO: Version 1.1.
+    # Get the data that pertains to 'Customer' the subject contains 'IN - mapping' and status is different
+    # from 'Removed (Closed)'
     costumer_in_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
-        (tasks_df['Subject'].str.contains('IN - mapping'))
-    ]
+        (tasks_df['Subject'].str.contains('IN - mapping')) &
+        (tasks_df['Status'] != 'Removed (Closed)')
+        ]
     customer_in_ds = costumer_in_df['% Done']
     counting_percentages_customer_in_ds = customer_in_ds.value_counts(ascending=True)
     if 60 not in counting_percentages_customer_in_ds.index:

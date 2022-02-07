@@ -385,7 +385,7 @@ class DrawDashboard:
     @staticmethod
     def save_image() -> None:
         current_date = datetime.datetime.now()
-        file_path = os.getenv('USERPROFILE') + '/Downloads/mx_edi_outlook_dashboard(' \
+        file_path = os.getenv('USERPROFILE') + '/Downloads/mx_edi_outlook_dashboard('\
                     + current_date.strftime("%Y%m%d%H%M%S") + ').svg'
         plot.savefig(file_path, dpi=200, format='svg')
         return
