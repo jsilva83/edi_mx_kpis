@@ -12,7 +12,7 @@ import pptx_read as ppt
 # Constants.
 PLAN_IO_QUERY_ALL_TASKS = 'https://seeburger.plan.io/projects/cu-21011-20210118/issues.csv?query_id=2056'
 SNP_STATUS_REPORT = 'C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - ' \
-                    'Status Reports/07FEB2022 - HUF Mexico EDI Status Dashboard.pptx'
+                    'Status Reports/14FEB2022 - HUF Mexico EDI Status Dashboard.pptx'
 # Figure constants.
 N_ROWS = 3
 N_COLUMNS = 3
@@ -214,6 +214,8 @@ def main():
         in_inside_text: (str) the text to display at the center of the graph.
         in_v_line_x: (int) x coordinate to display a vertical line."""
     # MX Customer IN.
+    h60_indexes = [index for index, value in enumerate(graph_2_x) if value >= 60]
+    sum_h60 = sum([value for index, value in enumerate(graph_2_y) if index in h60_indexes])
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[0],
         in_axe_title=f'MX Customers IN - Avg: {graph_2_avg}%',
@@ -223,12 +225,14 @@ def main():
         in_x_rotation=0,
         in_y_legend='# customers',
         in_y_data=graph_2_y,
-        in_inside_text=f'',
+        in_inside_text=f'Total msg: {sum_h60} / {sum(graph_2_y)}',
         in_v_line_x=60,
         in_avg=graph_2_avg,
     )
     # Display graph in grid position (0, 1).
     # MX Customer OUT.
+    h60_indexes = [index for index, value in enumerate(graph_3_x) if value >= 60]
+    sum_h60 = sum([value for index, value in enumerate(graph_3_y) if index in h60_indexes])
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[1],
         in_axe_title=f'MX Customers OUT - Avg: {graph_3_avg}%',
@@ -238,7 +242,7 @@ def main():
         in_x_rotation=0,
         in_y_legend='# customers',
         in_y_data=graph_3_y,
-        in_inside_text=f'',
+        in_inside_text=f'Total msg: {sum_h60} / {sum(graph_3_y)}',
         in_v_line_x=60,
         in_avg=graph_3_avg,
     )
@@ -257,6 +261,8 @@ def main():
     )
     # Display graph in grid position (1, 0).
     # MX Suppliers IN.
+    h60_indexes = [index for index, value in enumerate(graph_4_x) if value >= 60]
+    sum_h60 = sum([value for index, value in enumerate(graph_4_y) if index in h60_indexes])
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[3],
         in_axe_title=f'MX Suppliers IN - Avg: {graph_4_avg}%',
@@ -266,12 +272,14 @@ def main():
         in_x_rotation=0,
         in_y_legend='# suppliers',
         in_y_data=graph_4_y,
-        in_inside_text=f'',
+        in_inside_text=f'Total msg: {sum_h60} / {sum(graph_4_y)}',
         in_v_line_x=60,
         in_avg=graph_4_avg,
     )
     # Display graph in grid position (1, 1).
     # MX Suppliers OUT.
+    h60_indexes = [index for index, value in enumerate(graph_5_x) if value >= 60]
+    sum_h60 = sum([value for index, value in enumerate(graph_5_y) if index in h60_indexes])
     my_dashboard.bar_graph_wit_v_line(
         in_axe=my_dashboard.my_axes[4],
         in_axe_title=f'MX Suppliers OUT - Avg: {graph_5_avg}%',
@@ -281,7 +289,7 @@ def main():
         in_x_rotation=0,
         in_y_legend='# suppliers',
         in_y_data=graph_5_y,
-        in_inside_text=f'',
+        in_inside_text=f'Total msg: {sum_h60} / {sum(graph_5_y)}',
         in_v_line_x=60,
         in_avg=graph_5_avg,
     )
