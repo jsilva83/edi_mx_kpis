@@ -135,9 +135,9 @@ class DrawDashboard:
         if in_avg < 60.00:
             in_axe.scatter(0.95, 0.95, color='#EE0202', s=120, transform=in_axe.transAxes)
         elif 100 > in_avg >= 60:
-            in_axe.scatter(a_x, a_y, color='#EFF200', s=120, transform=in_axe.transAxes)
+            in_axe.scatter(0.95, 0.95, color='#EFF200', s=120, transform=in_axe.transAxes, zorder=1)
         else:
-            in_axe.scatter(a_x, a_y, color='#00A301', s=120, transform=in_axe.transAxes)
+            in_axe.scatter(0.95, 0.95, color='#00A301', s=120, transform=in_axe.transAxes)
         return
 
     @staticmethod
