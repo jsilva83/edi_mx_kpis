@@ -48,7 +48,15 @@ class PPTXRead:
                         a_key = a_key.replace(u'\xa0', u' ')
                     elif a_k == 4:
                         a_value = a_column.text_frame.text
-                        a_value = float(a_value.replace(u'%', u''))
+
+                        try:
+
+                            a_value = float(a_value.replace(u'%', u''))
+
+                        except:
+
+                            a_value = 0.0
+
                     elif a_k > 4:
                         break
                 out_dict[a_title][a_key] = a_value
