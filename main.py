@@ -1,5 +1,7 @@
 # Include external packages.
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import constants
 import main_functions as mf
@@ -43,7 +45,7 @@ def main():
             a_password = input('Enter your password to Seeburger site:\n')
 
         # Open browser window.
-        browser_window = webdriver.Chrome()
+        browser_window = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         browser_window.get('https://seeburger.plan.io/login?back_url=https%3A%2F%2Fseeburger.plan.io%2F')
         time.sleep(1)
 
