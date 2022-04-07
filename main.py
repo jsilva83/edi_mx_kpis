@@ -88,7 +88,6 @@ def main():
     #     (tasks_df['Planio Label 1'] == 'Customer') &
     #     (tasks_df['Subject'].str.contains('IN - mapping'))
     # ]
-    # TODO: Version 1.1.
     # Get the data that pertains to 'Customer' the subject contains 'IN - mapping' and status is different
     # from 'Removed (Closed)'
     costumer_in_df = tasks_df[
@@ -143,21 +142,27 @@ def main():
     graph_5_x = list(graph_5_ds.index)
     graph_5_y = graph_5_ds.values
     graph_5_avg = mf.calculate_average(graph_5_x, graph_5_y)
+
     # Create data for the sixth graph => Progress by customer (all costumers).
     customers_list = constants.PLAN_IO_QUERY_CUSTOMERS_MX
+
     # customers_list.sort()
     # Prepare the output lists for graph 6.
     graph_6_x = customers_list
     graph_6_y = []
+
     # Transform the subject field into lowercase.
     tasks_df['Subject'] = tasks_df['Subject'].str.lower()
+
     # Cycle each customer item and calculate the average.
     for customer_item in customers_list:
+
         customer_item = customer_item.lower()
         customer_item_df = tasks_df[tasks_df['Subject'].str.contains(customer_item)]
         customer_item_ds = customer_item_df['% Done']
         average_progress = customer_item_ds.mean()
         graph_6_y.append(round(average_progress))
+
     graph_6_avg = round(sum(graph_6_y) / len(graph_6_y), 1)
     global_average = round((graph_1_avg + graph_2_avg + graph_3_avg + graph_4_avg + graph_5_avg) / 5, 1)
 
@@ -338,11 +343,13 @@ def main():
         in_y_data=a_pptx_table_y_2,
         in_inside_text=f''
     )
+
     # Display graph in grid position (2, 0)
     # MX By Customers.
     a_bar_colors = []
-    a_bar_colors.extend('red' for _ in range(8))
-    a_bar_colors.extend('blue' for _ in range(13))
+    a_bar_colors.extend('red' for _ in range(11))
+    a_bar_colors.extend('blue' for _ in range(10))
+
     my_dashboard.bar_graph(
         in_axe=my_dashboard.my_axes[6],
         in_axe_title=f'MX By Customers - Avg: {graph_6_avg}%',
@@ -354,6 +361,7 @@ def main():
         in_y_data=graph_6_y,
         in_inside_text=f''
     )
+
     # Display graph in grid position (2, 1)
     # Communications Setup (All).
     my_dashboard.bar_graph_wit_v_line(
