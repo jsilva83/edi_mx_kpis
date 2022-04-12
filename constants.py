@@ -9,6 +9,7 @@ PLAN_IO_QUERY_CUSTOMERS_MX = [
     'Huf',
     'Magna',
     'Mazda',
+    'Rolls',
     'VW',
     'ABC',
     'ADAC',
