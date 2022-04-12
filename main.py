@@ -250,6 +250,7 @@ def main():
         in_y_data: the data for each bar (list).\n
         in_inside_text: (str) the text to display at the center of the graph.
         in_v_line_x: (int) x coordinate to display a vertical line."""
+
     # MX Customer IN.
     h60_indexes = [index for index, value in enumerate(graph_2_x) if value >= 60]
     sum_h60 = sum([value for index, value in enumerate(graph_2_y) if index in h60_indexes])
@@ -266,6 +267,7 @@ def main():
         in_v_line_x=60,
         in_avg=graph_2_avg,
     )
+
     # Display graph in grid position (0, 1).
     # MX Customer OUT.
     h60_indexes = [index for index, value in enumerate(graph_3_x) if value >= 60]
@@ -283,6 +285,7 @@ def main():
         in_v_line_x=60,
         in_avg=graph_3_avg,
     )
+
     # Display graph in grid position (0, 2)
     # MX Data Readiness Customers.
     my_dashboard.bar_graph(
@@ -296,6 +299,7 @@ def main():
         in_y_data=a_pptx_table_y_1,
         in_inside_text=f''
     )
+
     # Display graph in grid position (1, 0).
     # MX Suppliers IN.
     h60_indexes = [index for index, value in enumerate(graph_4_x) if value >= 60]
@@ -313,6 +317,7 @@ def main():
         in_v_line_x=60,
         in_avg=graph_4_avg,
     )
+
     # Display graph in grid position (1, 1).
     # MX Suppliers OUT.
     h60_indexes = [index for index, value in enumerate(graph_5_x) if value >= 60]
@@ -330,6 +335,7 @@ def main():
         in_v_line_x=60,
         in_avg=graph_5_avg,
     )
+
     # Display graph in grid position (0, 2)
     # MX Data Readiness Suppliers.
     my_dashboard.bar_graph(
@@ -347,8 +353,8 @@ def main():
     # Display graph in grid position (2, 0)
     # MX By Customers.
     a_bar_colors = []
-    a_bar_colors.extend('red' for _ in range(11))
-    a_bar_colors.extend('blue' for _ in range(10))
+    a_bar_colors.extend('red' for _ in range(12))
+    a_bar_colors.extend('blue' for _ in range(9))
 
     my_dashboard.bar_graph(
         in_axe=my_dashboard.my_axes[6],

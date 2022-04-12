@@ -13,7 +13,6 @@ PLAN_IO_QUERY_CUSTOMERS_MX = [
     'VW',
     'ABC',
     'ADAC',
-    'Dortec',
     'FlexNGate',
     'MBUSI',
     'PLASTIC',
