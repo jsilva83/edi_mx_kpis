@@ -14,7 +14,7 @@ import pptx_read as ppt
 # Constants.
 PLAN_IO_QUERY_ALL_TASKS = 'https://seeburger.plan.io/projects/cu-21011-20210118/issues.csv?query_id=2056'
 SNP_STATUS_REPORT = 'C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/SNP-O365-EXT-PRO-HUF_MEXICO - ' \
-                    'Status Reports/05APR2022 - HUF Mexico EDI Status Dashboard.pptx'
+                    'Status Reports/20APR2022 - HUF Mexico EDI Status Dashboard.pptx'
 # Figure constants.
 N_ROWS = 3
 N_COLUMNS = 3
@@ -218,8 +218,8 @@ def main():
 
     # Calculate colors.
     a_pptx_table_colors_2 = []
-    a_pptx_table_colors_2.extend('red' for _ in range(a_colors_1[0]))
-    a_pptx_table_colors_2.extend('blue' for _ in range(a_colors_1[1]))
+    a_pptx_table_colors_2.extend('red' for _ in range(a_colors_2[0]))
+    a_pptx_table_colors_2.extend('blue' for _ in range(a_colors_2[1]))
 
     # Start plotting.
     # Start creating the dashboard and its figure and axes.
