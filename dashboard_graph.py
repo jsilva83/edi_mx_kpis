@@ -26,21 +26,26 @@ class DrawDashboard:
         in_n_columns: number of columns for axes grid.\n
         in_fig_size_width: width of the figure.\n
         in_fig_size_height: height of the figure."""
+
         # self.my_figure, self.my_axes = plot.subplots(
         #     nrows=in_n_rows,
         #     ncols=in_n_columns,
         #     figsize=(in_fig_size_width, in_fig_size_height)
         # )
+
         self.my_figure = plot.figure(figsize=(in_fig_size_width, in_fig_size_height))
         self.my_axes = []
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 0)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 1)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 2)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 3)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 0)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 1)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 2)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (1, 3)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (2, 0), colspan=2))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (2, 2)))
+        self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (2, 3)))
         # Set figure's title.
         current_date = datetime.datetime.now()
         self.my_figure.suptitle(
@@ -187,12 +192,12 @@ class DrawDashboard:
         out_sum_result = [sum(a_tuple) for a_tuple in list(zip(in_int_list_1, in_int_list_2))]
         return out_sum_result
 
-    def stacked_bar_graph(self, in_axe_index: tuple, in_axe_title: str, in_bar_color: list,
+    def stacked_bar_graph(self, in_axe, in_axe_title: str, in_bar_color: list,
                           in_x_legend: str, in_x_ticks_labels: list, in_x_rotation: str,
                           in_y_legend: str, in_y_data: list, in_stack_categories: list, in_inside_text) -> None:
         """Creates the elements to show in a bar graph.\n
         Arguments:
-        in_axe_index: index number (tuple) of the axes array to be used for the bar graph.\n
+        in_axe: axe to be used for the bar graph.\n
         in_axe_title: title of the graph (displayed on top).\n
         in_bar_color: list of colors (list of str).\n
         in_x_legend: legend of the X axis (str).\n
@@ -202,18 +207,17 @@ class DrawDashboard:
         in_y_data: the data for each bar (list of lists).\n
         in_stack_categories: the categories to stack (1. Very High, 2. High, etc.).\n
         in_inside_text: the text to insert inline with the graph."""
-        g_row = in_axe_index[0]
-        g_column = in_axe_index[1]
-        self.my_axes[g_row][g_column].set_title(in_axe_title, loc='center', fontdict=FONT_TITLE)
-        self.my_axes[g_row][g_column].grid(axis='y', linestyle='dotted')
+
+        in_axe.set_title(in_axe_title, loc='center', fontdict=FONT_TITLE)
+        in_axe.grid(axis='y', linestyle='dotted')
         # Axe X.
-        self.my_axes[g_row][g_column].set_xlabel(in_x_legend, fontdict=FONT_XY_LABEL)
+        in_axe.set_xlabel(in_x_legend, fontdict=FONT_XY_LABEL)
         x_ticks_position = numpy.arange(len(in_y_data[0]))
-        self.my_axes[g_row][g_column].set_xticks(x_ticks_position)
-        self.my_axes[g_row][g_column].set_xticklabels(in_x_ticks_labels, fontsize=6, rotation=in_x_rotation)
+        in_axe.set_xticks(x_ticks_position)
+        in_axe.set_xticklabels(in_x_ticks_labels, fontsize=6, rotation=in_x_rotation)
         # Axe Y.
-        self.my_axes[g_row][g_column].set_ylabel(in_y_legend, fontdict=FONT_XY_LABEL)
-        self.my_axes[g_row][g_column].tick_params(axis='y', labelsize=6)
+        in_axe.set_ylabel(in_y_legend, fontdict=FONT_XY_LABEL)
+        in_axe.tick_params(axis='y', labelsize=6)
         # Baseline for first bar rect is 0.
         stack_len = len(in_y_data[0])
         bottom_coord = [[0 for _ in range(stack_len)], in_y_data[0]]
@@ -225,30 +229,33 @@ class DrawDashboard:
         # Create bar series (on per criticality).
         graph_bars = []
         for n in range(len(in_y_data)):
-            graph_bars.append(self.my_axes[g_row][g_column].bar(x_ticks_position, in_y_data[n],
-                                                                bottom=bottom_coord[n],
-                                                                label=in_stack_categories[n],
-                                                                align='center',
-                                                                color=in_bar_color[n],
-                                                                alpha=0.5
-                                                                )
+            graph_bars.append(in_axe.bar(x_ticks_position, in_y_data[n],
+                                         bottom=bottom_coord[n],
+                                         label=in_stack_categories[n],
+                                         align='center',
+                                         color=in_bar_color[n],
+                                         alpha=0.5
+                                         )
                               )
+
         # Write the labels inside the bars.
         for a_graph_bar in graph_bars:
-            self.my_axes[g_row][g_column].bar_label(a_graph_bar,
-                                                    label_type='center',
-                                                    color='black',
-                                                    fontsize=FONT_VALUE_LABEL_SIZE,
-                                                    fontfamily='arial'
-                                                    )
+            in_axe.bar_label(a_graph_bar,
+                             label_type='center',
+                             color='black',
+                             fontsize=FONT_VALUE_LABEL_SIZE,
+                             fontfamily='arial'
+                             )
+
         # Write text inside the graph.
-        self.my_axes[g_row][g_column].text(0.5, 0.9, in_inside_text,
-                                           FONT_INSIDE_TEXT,
-                                           horizontalalignment='center',
-                                           transform=self.my_axes[in_axe_index].transAxes
-                                           )
+        in_axe.text(0.5, 0.9, in_inside_text,
+                    FONT_INSIDE_TEXT,
+                    horizontalalignment='center',
+                    transform=in_axe.transAxes
+                    )
+
         # Show the legend
-        self.my_axes[g_row][g_column].legend(fontsize=6)
+        in_axe.legend(fontsize=6)
         return
 
     def boxplot_bar_graph(self, in_axe_index: tuple, in_axe_title: str, in_bar_color: list,
@@ -357,12 +364,19 @@ class DrawDashboard:
                                                )
         return
 
-    def make_axe_invisible(self, in_axe: tuple) -> None:
+    # def make_axe_invisible(self, in_axe: tuple) -> None:
+    #     # __init__
+    #     g_row = in_axe[0]
+    #     g_column = in_axe[1]
+    #     # Set graph title and y grid.
+    #     self.my_axes[g_row][g_column].set_visible(False)
+    #     return
+
+    @staticmethod
+    def make_axe_invisible(in_axe) -> None:
         # __init__
-        g_row = in_axe[0]
-        g_column = in_axe[1]
-        # Set graph title and y grid.
-        self.my_axes[g_row][g_column].set_visible(False)
+        # Hide Axe.
+        in_axe.set_visible(False)
         return
 
     def show_traffic_light(self, in_percentage) -> None:
@@ -373,7 +387,7 @@ class DrawDashboard:
         else:
             image_obj = plot.imread('./images/traffic-light-green-(100x100).png')
         # Arguments are x position followed by y position.
-        self.my_figure.figimage(image_obj, 2030, 1900)
+        self.my_figure.figimage(image_obj, 2250, 1900)
         return
 
     @staticmethod

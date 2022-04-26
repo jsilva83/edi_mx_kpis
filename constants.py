@@ -21,3 +21,17 @@ PLAN_IO_QUERY_CUSTOMERS_MX = [
     'STRATTEC',
     'Ventra',
 ]
+PLAN_IO_CRITICAL_CUSTOMERS_MX = [
+    'BMW',
+    'Brose',
+    'Chrysler',
+    'Ford',
+    'GM',
+    'Harley',
+    'Hilex',
+    'Huf',
+    'Magna',
+    'Mazda',
+    'Rolls',
+    'VW',
+]

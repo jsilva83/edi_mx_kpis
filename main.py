@@ -3,9 +3,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
-import constants
+import constants as kt
 import main_functions as mf
 import pandas as pd
+import numpy as np
 from numpy import mean
 import os
 # Import internal packages.
@@ -17,9 +18,9 @@ SNP_STATUS_REPORT = 'C:/Users/jorge.silva/SNP Schneider-Neureither & Partner SE/
                     'Status Reports/20APR2022 - HUF Mexico EDI Status Dashboard.pptx'
 # Figure constants.
 N_ROWS = 3
-N_COLUMNS = 3
+N_COLUMNS = 4  # previously 3
 FIG_TITLE = 'EDI/MX Outlook Dashboard - '
-FIG_SIZE_WIDTH = 14
+FIG_SIZE_WIDTH = 16  # previously 14
 FIG_SIZE_HEIGHT = 10
 FIG_TITLE_COLOR = ['black']
 # Bar color constants.
@@ -62,19 +63,23 @@ def main():
 
     # Read file to dataframe.
     tasks_df = pd.read_csv(file_path)
+
     # Create data for the first graph => Communication setup (ALl Customers).
     # Filter dataframe for rows that are 'Customer' and 'Subject' contains 'Communication setup'.
     comm_setup_all_suppliers_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
         (tasks_df['Subject'].str.contains('communication setup'))
     ]
+
     # Create a data series with column '% Done' just for the filtered rows.
     comm_setup_all_suppliers_ds = comm_setup_all_suppliers_df['% Done']
+
     # Calculate unique values counting.
     counting_percentages_comm_setup_ds = comm_setup_all_suppliers_ds.value_counts(ascending=True)
     # Add index 60 if it does not exist in the series index.
     if 60 not in counting_percentages_comm_setup_ds.index:
         counting_percentages_comm_setup_ds[60] = 0
+
     # Sort index to make sure it in ascending order.
     graph_1_ds = counting_percentages_comm_setup_ds.sort_index()
     # Axis 'X' values.
@@ -82,6 +87,7 @@ def main():
     # Axis 'Y' values.
     graph_1_y = list(graph_1_ds.values)
     graph_1_avg = mf.calculate_average(graph_1_x, graph_1_y)
+
     # Create data for the second graph => Customer IN (All customers).
     # Version 1.0.
     # costumer_in_df = tasks_df[
@@ -144,7 +150,7 @@ def main():
     graph_5_avg = mf.calculate_average(graph_5_x, graph_5_y)
 
     # Create data for the sixth graph => Progress by customer (all costumers).
-    customers_list = constants.PLAN_IO_QUERY_CUSTOMERS_MX
+    customers_list = kt.PLAN_IO_QUERY_CUSTOMERS_MX
 
     # customers_list.sort()
     # Prepare the output lists for graph 6.
@@ -221,6 +227,48 @@ def main():
     a_pptx_table_colors_2.extend('red' for _ in range(a_colors_2[0]))
     a_pptx_table_colors_2.extend('blue' for _ in range(a_colors_2[1]))
 
+    # Calculate the data for the graph: INBOUND customer counting of messages above 60% and bellow 60%.
+    # Step 1: remove lines that are not related to customer, not inbound and were removed or rejected.
+    tasks_df = pd.read_csv(file_path)
+    df_1 = tasks_df[
+        (tasks_df['Planio Label 1'] == 'Customer') &
+        (tasks_df['Subject']).str.contains('IN - mapping') &
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+    ]
+
+    # Leave only the columns of interest.
+    df_1 = df_1[['Subject', '% Done']]
+
+    # Step 2: add a column with the customer name and remove non-critical customers.
+    subject_lst = list(df_1['Subject'])
+    customer_lst = [item.split('_')[0] for item in subject_lst]
+    customer_lst = [item.split(' ')[0] for item in customer_lst]
+
+    df_1.insert(1, 'Customer', customer_lst)
+    df_1 = df_1.drop(columns=['Subject'])
+
+    # Transform to lower case.
+    plan_io_lower_customers = [item.lower() for item in kt.PLAN_IO_CRITICAL_CUSTOMERS_MX]
+    df_1['Customer'] = df_1['Customer'].str.lower()
+    df_2 = df_1[df_1['Customer'].isin(plan_io_lower_customers)]
+
+    # Step 3:
+    # Rename column '% Done' to '60_done'
+    df_2 = df_2.rename(columns={'% Done': '60_done'})
+
+    # Duplicate column.
+    df_2['40_done'] = df_2['60_done']
+
+    # Update the value of column '40_done' with NaN if value is higher or equal to 60.
+    df_2.loc[df_2['40_done'] >= 60, '40_done'] = np.nan
+    df_2.loc[df_2['60_done'] < 60, '60_done'] = np.nan
+
+    # Transform to lower case.
+    df_2['Customer'] = df_2['Customer'].str.lower()
+
+    # Count number of non NaN values.
+    df_3 = df_2.groupby(by='Customer').count()
+
     # Start plotting.
     # Start creating the dashboard and its figure and axes.
     """Creates the figure and axes objects.\n
@@ -251,6 +299,7 @@ def main():
         in_inside_text: (str) the text to display at the center of the graph.
         in_v_line_x: (int) x coordinate to display a vertical line."""
 
+    # Display graph in grid position (0, 0).
     # MX Customer IN.
     h60_indexes = [index for index, value in enumerate(graph_2_x) if value >= 60]
     sum_h60 = sum([value for index, value in enumerate(graph_2_y) if index in h60_indexes])
@@ -268,12 +317,25 @@ def main():
         in_avg=graph_2_avg,
     )
 
-    # Display graph in grid position (0, 1).
+    my_dashboard.stacked_bar_graph(
+        in_axe=my_dashboard.my_axes[1],
+        in_axe_title='MX Customers IN (critical)',
+        in_bar_color=['green', 'red'],
+        in_x_legend='customers',
+        in_x_ticks_labels=df_3.index,
+        in_x_rotation='horizontal',
+        in_y_legend='# messages',
+        in_y_data=[list(df_3['60_done']), list(df_3['40_done'])],
+        in_stack_categories=['>=60%', '<60%'],
+        in_inside_text=f'{df_3["60_done"].sum()} out of {df_3["60_done"].sum() + df_3["40_done"].sum()}'
+    )
+
+    # Display graph in grid position (0, 2).
     # MX Customer OUT.
     h60_indexes = [index for index, value in enumerate(graph_3_x) if value >= 60]
     sum_h60 = sum([value for index, value in enumerate(graph_3_y) if index in h60_indexes])
     my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[1],
+        in_axe=my_dashboard.my_axes[2],
         in_axe_title=f'MX Customers OUT - Avg: {graph_3_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -286,10 +348,10 @@ def main():
         in_avg=graph_3_avg,
     )
 
-    # Display graph in grid position (0, 2)
+    # Display graph in grid position (1, 2)
     # MX Data Readiness Customers.
     my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[2],
+        in_axe=my_dashboard.my_axes[6],
         in_axe_title=f'MX Data Readiness Customers - Avg: {round(mean(a_pptx_table_y_1), 2)}%',
         in_bar_color=a_pptx_table_colors_1,
         in_x_legend='objects',
@@ -305,7 +367,7 @@ def main():
     h60_indexes = [index for index, value in enumerate(graph_4_x) if value >= 60]
     sum_h60 = sum([value for index, value in enumerate(graph_4_y) if index in h60_indexes])
     my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[3],
+        in_axe=my_dashboard.my_axes[4],
         in_axe_title=f'MX Suppliers IN - Avg: {graph_4_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -323,7 +385,7 @@ def main():
     h60_indexes = [index for index, value in enumerate(graph_5_x) if value >= 60]
     sum_h60 = sum([value for index, value in enumerate(graph_5_y) if index in h60_indexes])
     my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[4],
+        in_axe=my_dashboard.my_axes[5],
         in_axe_title=f'MX Suppliers OUT - Avg: {graph_5_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -336,10 +398,10 @@ def main():
         in_avg=graph_5_avg,
     )
 
-    # Display graph in grid position (0, 2)
+    # Display graph in grid position (3, 2)
     # MX Data Readiness Suppliers.
     my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[5],
+        in_axe=my_dashboard.my_axes[9],
         in_axe_title=f'MMX Data Readiness Suppliers - Avg: {round(mean(a_pptx_table_y_2), 2)}%',
         in_bar_color=a_pptx_table_colors_2,
         in_x_legend='objects',
@@ -357,7 +419,7 @@ def main():
     a_bar_colors.extend('blue' for _ in range(9))
 
     my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[6],
+        in_axe=my_dashboard.my_axes[8],
         in_axe_title=f'MX By Customers - Avg: {graph_6_avg}%',
         in_bar_color=a_bar_colors,
         in_x_legend='customers',
@@ -368,10 +430,10 @@ def main():
         in_inside_text=f''
     )
 
-    # Display graph in grid position (2, 1)
+    # Display graph in grid position (0, 3)
     # Communications Setup (All).
     my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[7],
+        in_axe=my_dashboard.my_axes[3],
         in_axe_title=f'Communications Setup (All) - Avg: {graph_1_avg}%',
         in_bar_color=BAR_COLOR_BLUE,
         in_x_legend='progress (in %)',
@@ -385,6 +447,9 @@ def main():
     )
     # Add the traffic light to the image.
     my_dashboard.show_traffic_light(global_average)
+    # Make some axes / graphs invisible.
+    my_dashboard.make_axe_invisible(my_dashboard.my_axes[7])
+    my_dashboard.make_axe_invisible(my_dashboard.my_axes[10])
     # Save dashboard.
     my_dashboard.save_image()
     # Show graphs.
