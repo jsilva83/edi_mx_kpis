@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/edi_mx_kpis.iml" filepath="$PROJECT_DIR$/.idea/edi_mx_kpis.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../sap_ams_kpis/.idea/sap_ams_kpis.iml" filepath="$PROJECT_DIR$/../sap_ams_kpis/.idea/sap_ams_kpis.iml" />
     </modules>
   </component>
 </project>
