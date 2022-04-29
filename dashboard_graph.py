@@ -33,7 +33,7 @@ class DrawDashboard:
         #     figsize=(in_fig_size_width, in_fig_size_height)
         # )
 
-        self.my_figure = plot.figure(figsize=(in_fig_size_width, in_fig_size_height), dpi=120)
+        self.my_figure = plot.figure(figsize=(in_fig_size_width, in_fig_size_height))
         self.my_axes = []
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 0)))
         self.my_axes.append(plot.subplot2grid((in_n_rows, in_n_columns), (0, 1)))
