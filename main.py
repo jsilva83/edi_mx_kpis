@@ -227,7 +227,9 @@ def main():
     a_pptx_table_colors_2.extend('red' for _ in range(a_colors_2[0]))
     a_pptx_table_colors_2.extend('blue' for _ in range(a_colors_2[1]))
 
+    # ---------------------------------------------------------------------------------------------
     # Calculate the data for the graph: INBOUND customer counting of messages above 60% and bellow 60%.
+
     # Step 1: remove lines that are not related to customer, not inbound and were removed or rejected.
     tasks_df = pd.read_csv(file_path)
     df_1 = tasks_df[
@@ -252,6 +254,24 @@ def main():
     df_1['Customer'] = df_1['Customer'].str.lower()
     df_2 = df_1[df_1['Customer'].isin(plan_io_lower_customers)]
 
+    # ---------------------------------------------------------------------------------------------
+    # Function to update the customer names in the dataframe but with only 6 chars.
+
+    # Trim customer name to 6 chars.
+    def trim_customer(row_value):
+
+        if len(row_value) > 5:
+
+            result = row_value[:5]
+
+        else:
+
+            result = row_value
+
+        return row_value
+
+    df_2['Customer'] = df_2['Customer'].apply(trim_customer)
+
     # Step 3:
     # Rename column '% Done' to '60_done'
     df_2 = df_2.rename(columns={'% Done': '60_done'})
@@ -269,8 +289,126 @@ def main():
     # Count number of non NaN values.
     df_3 = df_2.groupby(by='Customer').count()
 
+    # ---------------------------------------------------------------------------------------------
+    # Calculate the data for the graph: OUTBOUND customer counting of messages above 60% and bellow 60%.
+
+    # Step 1: remove lines that are not related to customer, not inbound and were removed or rejected.
+    df_a = tasks_df[
+        (tasks_df['Planio Label 1'] == 'Customer') &
+        (tasks_df['Subject']).str.contains('OUT - mapping') &
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+        ]
+
+    # Leave only the columns of interest.
+    df_a = df_a[['Subject', '% Done']]
+
+    # Step 2: add a column with the customer name and remove non-critical customers.
+    subject_lst = list(df_a['Subject'])
+    customer_lst = [item.split('_')[0] for item in subject_lst]
+    customer_lst = [item.split(' ')[0] for item in customer_lst]
+
+    df_a.insert(1, 'Customer', customer_lst)
+    df_a = df_a.drop(columns=['Subject'])
+
+    # Transform to lower case.
+    plan_io_lower_customers = [item.lower() for item in kt.PLAN_IO_CRITICAL_CUSTOMERS_MX]
+    df_a['Customer'] = df_a['Customer'].str.lower()
+    df_b = df_a[df_a['Customer'].isin(plan_io_lower_customers)]
+
+    # Cut to the 6 chars on the left of the customer name.
+    df_b['Customer'] = df_b['Customer'].apply(trim_customer)
+
+    # Step 3:
+    # Rename column '% Done' to '60_done'
+    df_b = df_b.rename(columns={'% Done': '60_done'})
+
+    # Duplicate column.
+    df_b['40_done'] = df_b['60_done']
+
+    # Update the value of column '40_done' with NaN if value is higher or equal to 60.
+    df_b.loc[df_b['40_done'] >= 60, '40_done'] = np.nan
+    df_b.loc[df_b['60_done'] < 60, '60_done'] = np.nan
+
+    # Transform to lower case.
+    df_b['Customer'] = df_b['Customer'].str.lower()
+
+    # Count number of non NaN values.
+    df_c = df_b.groupby(by='Customer').count()
+
+    # ---------------------------------------------------------------------------------------------
+    # Calculate the data for the graph: INBOUND Assignee (critical & <60%).
+
+    # Step 1: remove lines that are not related to customer, not outbound and were removed or rejected.
+    df_in_less_60 = tasks_df[
+        (tasks_df['Planio Label 1'] == 'Customer') &
+        (tasks_df['Subject']).str.contains('IN - mapping') &
+        (tasks_df['Priority'] == 'High') &
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+        ]
+
+    # Step 2: keep only columns of interest and fill NaN with "NA, NA".
+    df_in_less_60 = df_in_less_60[['Subject', 'Assignee', '% Done']]
+    df_in_less_60.fillna('NA, NA', inplace=True)
+
+    # Step 3: add a column with the customer name and remove non-critical customers.
+    subject_lst = list(df_in_less_60['Subject'])
+    customer_lst = [item.split('_')[0] for item in subject_lst]
+    customer_lst = [item.split(' ')[0] for item in customer_lst]
+
+    df_in_less_60.insert(1, 'Customer', customer_lst)
+    df_in_less_60 = df_in_less_60.drop(columns=['Subject'])
+
+    # Transform customers to lower case and filter those critical ones and bellow 60%.
+    plan_io_lower_customers = [item.lower() for item in kt.PLAN_IO_CRITICAL_CUSTOMERS_MX]
+    df_in_less_60['Customer'] = df_in_less_60['Customer'].str.lower()
+    df_in_less_60 = df_in_less_60[df_in_less_60['Customer'].isin(plan_io_lower_customers)]
+    df_in_less_60 = df_in_less_60[df_in_less_60['% Done'] < 60]
+
+    # Leave only one name in the assignee field.
+    df_in_less_60['Assignee'] = df_in_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+
+    # Count number of lines with grouped by assignee (use for graph).
+    df_in_less_60_by_assignee = df_in_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
+
+    # ---------------------------------------------------------------------------------------------
+    # Calculate the data for the graph: OUTBOUND Assignee (critical & <60%).
+
+    # Step 1: remove lines that are not related to customer, not outbound and were removed or rejected.
+    df_out_less_60 = tasks_df[
+        (tasks_df['Planio Label 1'] == 'Customer') &
+        (tasks_df['Subject']).str.contains('OUT - mapping') &
+        (tasks_df['Priority'] == 'High') &
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+        ]
+
+    # Step 2: keep only columns of interest and fill NaN with "NA, NA".
+    df_out_less_60 = df_out_less_60[['Subject', 'Assignee', '% Done']]
+    df_out_less_60.fillna('NA, NA', inplace=True)
+
+    # Step 3: add a column with the customer name and remove non-critical customers.
+    subject_lst = list(df_out_less_60['Subject'])
+    customer_lst = [item.split('_')[0] for item in subject_lst]
+    customer_lst = [item.split(' ')[0] for item in customer_lst]
+
+    df_out_less_60.insert(1, 'Customer', customer_lst)
+    df_out_less_60 = df_out_less_60.drop(columns=['Subject'])
+
+    # Transform customers to lower case and filter those critical ones and bellow 60%.
+    plan_io_lower_customers = [item.lower() for item in kt.PLAN_IO_CRITICAL_CUSTOMERS_MX]
+    df_out_less_60['Customer'] = df_out_less_60['Customer'].str.lower()
+    df_out_less_60 = df_out_less_60[df_out_less_60['Customer'].isin(plan_io_lower_customers)]
+    df_out_less_60 = df_out_less_60[df_out_less_60['% Done'] < 60]
+
+    # Leave only one name in the assignee field.
+    df_out_less_60['Assignee'] = df_out_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+
+    # Count number of lines with grouped by assignee (use for graph).
+    df_out_less_60_by_assignee = df_out_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
+
+    # ---------------------------------------------------------------------------------------------
     # Start plotting.
     # Start creating the dashboard and its figure and axes.
+
     """Creates the figure and axes objects.\n
     in_n_rows: number of rows for axes grid.\n
     in_n_columns: number of columns for axes grid.\n
@@ -317,6 +455,10 @@ def main():
         in_avg=graph_2_avg,
     )
 
+    # ---------------------------------------------------------------------------------------------
+    # MX Customer IN (critical)
+    # Position = (0, 1)
+
     my_dashboard.stacked_bar_graph(
         in_axe=my_dashboard.my_axes[1],
         in_axe_title='MX Customers IN (critical)',
@@ -330,7 +472,9 @@ def main():
         in_inside_text=f'{df_3["60_done"].sum()} out of {df_3["60_done"].sum() + df_3["40_done"].sum()}'
     )
 
+    # ---------------------------------------------------------------------------------------------
     # Display graph in grid position (0, 2).
+
     # MX Customer OUT.
     h60_indexes = [index for index, value in enumerate(graph_3_x) if value >= 60]
     sum_h60 = sum([value for index, value in enumerate(graph_3_y) if index in h60_indexes])
@@ -348,19 +492,38 @@ def main():
         in_avg=graph_3_avg,
     )
 
-    # Display graph in grid position (1, 2)
-    # MX Data Readiness Customers.
-    my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[6],
-        in_axe_title=f'MX Data Readiness Customers - Avg: {round(mean(a_pptx_table_y_1), 2)}%',
-        in_bar_color=a_pptx_table_colors_1,
-        in_x_legend='objects',
-        in_x_ticks_labels=a_pptx_table_x_1,
-        in_x_rotation=45,
-        in_y_legend='% complete',
-        in_y_data=a_pptx_table_y_1,
-        in_inside_text=f''
+    # ---------------------------------------------------------------------------------------------
+    # MX Customer OUT (critical)
+    # Position = (0, 3)
+
+    my_dashboard.stacked_bar_graph(
+        in_axe=my_dashboard.my_axes[3],
+        in_axe_title='MX Customers OUT (critical)',
+        in_bar_color=['green', 'red'],
+        in_x_legend='customers',
+        in_x_ticks_labels=df_c.index,
+        in_x_rotation='horizontal',
+        in_y_legend='# messages',
+        in_y_data=[list(df_c['60_done']), list(df_c['40_done'])],
+        in_stack_categories=['>=60%', '<60%'],
+        in_inside_text=f'{df_c["60_done"].sum()} out of {df_c["60_done"].sum() + df_c["40_done"].sum()}'
     )
+
+    # Display graph in grid position (0, 3)
+    # Communications Setup (All).
+    # my_dashboard.bar_graph_wit_v_line(
+    #     in_axe=my_dashboard.my_axes[3],
+    #     in_axe_title=f'Communications Setup (All) - Avg: {graph_1_avg}%',
+    #     in_bar_color=BAR_COLOR_BLUE,
+    #     in_x_legend='progress (in %)',
+    #     in_x_ticks_labels=graph_1_x,
+    #     in_x_rotation=0,
+    #     in_y_legend='# channels',
+    #     in_y_data=graph_1_y,
+    #     in_inside_text=f'',
+    #     in_v_line_x=60,
+    #     in_avg=graph_1_avg,
+    # )
 
     # Display graph in grid position (1, 0).
     # MX Suppliers IN.
@@ -398,21 +561,39 @@ def main():
         in_avg=graph_5_avg,
     )
 
-    # Display graph in grid position (3, 2)
-    # MX Data Readiness Suppliers.
+    # ---------------------------------------------------------------------------------------------
+    # Display graph in grid position (1, 2)
+
+    # MX Data Readiness Customers.
+    # my_dashboard.bar_graph(
+    #     in_axe=my_dashboard.my_axes[6],
+    #     in_axe_title=f'MX Data Readiness Customers - Avg: {round(mean(a_pptx_table_y_1), 2)}%',
+    #     in_bar_color=a_pptx_table_colors_1,
+    #     in_x_legend='objects',
+    #     in_x_ticks_labels=a_pptx_table_x_1,
+    #     in_x_rotation=45,
+    #     in_y_legend='% complete',
+    #     in_y_data=a_pptx_table_y_1,
+    #     in_inside_text=f''
+    # )
+
+    # MX Assignee IN.
     my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[9],
-        in_axe_title=f'MMX Data Readiness Suppliers - Avg: {round(mean(a_pptx_table_y_2), 2)}%',
-        in_bar_color=a_pptx_table_colors_2,
-        in_x_legend='objects',
-        in_x_ticks_labels=a_pptx_table_x_2,
-        in_x_rotation=45,
-        in_y_legend='% complete',
-        in_y_data=a_pptx_table_y_2,
-        in_inside_text=f''
+        in_axe=my_dashboard.my_axes[6],
+        in_axe_title=f'MX Assignee IN (critical & < 60%)',
+        in_bar_color=BAR_COLOR_DOUBLE,
+        in_x_legend='assignee',
+        in_x_ticks_labels=df_in_less_60_by_assignee.index,
+        in_x_rotation=0,
+        in_y_legend='# tasks',
+        in_y_data=df_in_less_60_by_assignee['% Done'],
+        in_inside_text=f'',
+        in_y_limits=(0, df_in_less_60_by_assignee['% Done'][0] + 1)
     )
 
+    # ---------------------------------------------------------------------------------------------
     # Display graph in grid position (2, 0)
+
     # MX By Customers.
     a_bar_colors = []
     a_bar_colors.extend('red' for _ in range(12))
@@ -430,21 +611,36 @@ def main():
         in_inside_text=f''
     )
 
-    # Display graph in grid position (0, 3)
-    # Communications Setup (All).
-    my_dashboard.bar_graph_wit_v_line(
-        in_axe=my_dashboard.my_axes[3],
-        in_axe_title=f'Communications Setup (All) - Avg: {graph_1_avg}%',
-        in_bar_color=BAR_COLOR_BLUE,
-        in_x_legend='progress (in %)',
-        in_x_ticks_labels=graph_1_x,
+    # ---------------------------------------------------------------------------------------------
+    # Display graph in grid position (2, 2)
+
+    # MX Data Readiness Suppliers.
+    # my_dashboard.bar_graph(
+    #     in_axe=my_dashboard.my_axes[9],
+    #     in_axe_title=f'MMX Data Readiness Suppliers - Avg: {round(mean(a_pptx_table_y_2), 2)}%',
+    #     in_bar_color=a_pptx_table_colors_2,
+    #     in_x_legend='objects',
+    #     in_x_ticks_labels=a_pptx_table_x_2,
+    #     in_x_rotation=45,
+    #     in_y_legend='% complete',
+    #     in_y_data=a_pptx_table_y_2,
+    #     in_inside_text=f''
+    # )
+
+    # MX Assignee OUT.
+    my_dashboard.bar_graph(
+        in_axe=my_dashboard.my_axes[9],
+        in_axe_title=f'MX Assignee OUT (critical & < 60%)',
+        in_bar_color=BAR_COLOR_DOUBLE,
+        in_x_legend='assignee',
+        in_x_ticks_labels=df_out_less_60_by_assignee.index,
         in_x_rotation=0,
-        in_y_legend='# channels',
-        in_y_data=graph_1_y,
+        in_y_legend='# tasks',
+        in_y_data=df_out_less_60_by_assignee['% Done'],
         in_inside_text=f'',
-        in_v_line_x=60,
-        in_avg=graph_1_avg,
+        in_y_limits=(0, df_out_less_60_by_assignee['% Done'][0] + 1)
     )
+
     # Add the traffic light to the image.
     my_dashboard.show_traffic_light(global_average)
     # Make some axes / graphs invisible.

@@ -58,7 +58,8 @@ class DrawDashboard:
 
     def bar_graph(self, in_axe, in_axe_title: str, in_bar_color: list,
                   in_x_legend: str, in_x_ticks_labels: list, in_x_rotation: int,
-                  in_y_legend: str, in_y_data: list, in_inside_text) -> None:
+                  in_y_legend: str, in_y_data: list, in_inside_text,
+                  in_y_limits=None) -> None:
         """Creates the elements to show in a bar graph.\n
         in_axe:
         in_axe_index: index number (tuple) of the axes array to be used for the bar graph.\n
@@ -70,20 +71,28 @@ class DrawDashboard:
         in_x_rotation: (int) rotation angle of the x labels.\n
         in_y_legend: legend of the Y axis (str).\n
         in_y_data: the data for each bar (list)."""
+
         in_axe.set_title(in_axe_title, loc='center', fontdict=FONT_TITLE)
         in_axe.grid(axis='y', linestyle='dotted')
         in_axe.set_ylim(0, 100)
+
         # Axe X.
         in_axe.set_xlabel(in_x_legend, fontdict=FONT_XY_LABEL)
         x_ticks_position = numpy.arange(len(in_y_data))
         in_axe.set_xticks(x_ticks_position)
         in_axe.set_xticklabels(in_x_ticks_labels, fontsize=6, rotation=in_x_rotation)
+
         # Axe Y.
         in_axe.set_ylabel(in_y_legend, fontdict=FONT_XY_LABEL)
         in_axe.tick_params(axis='y', labelsize=6)
         in_axe.bar(x_ticks_position, in_y_data, align='center', color=in_bar_color, alpha=0.5)
+
+        if in_y_limits is not None:
+            in_axe.set_ylim(in_y_limits[0], in_y_limits[1])
+
         # Add label to each bar.
         self.add_values_to_labels(in_axe, in_y_data, in_spacing=LABEL_SPACING)
+
         # Write text inside the graph.
         in_axe.text(0.5, 0.9, in_inside_text,
                     FONT_INSIDE_TEXT,
