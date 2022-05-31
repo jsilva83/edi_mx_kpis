@@ -49,7 +49,7 @@ class DrawDashboard:
         # Set figure's title.
         current_date = datetime.datetime.now()
         self.my_figure.suptitle(
-            in_fig_title + current_date.strftime("%d.%m.%Y, %H:%M:%S") + '(UTC+0) - Total average: '
+            in_fig_title + current_date.strftime("%d.%m.%Y, %H:%M:%S") + '(UTC-6) - Total average: '
             + str(in_avg) + '%',
             fontsize=FONT_TITLE_SIZE
         )

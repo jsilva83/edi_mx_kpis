@@ -235,7 +235,7 @@ def main():
     df_1 = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
         (tasks_df['Subject']).str.contains('IN - mapping') &
-        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)', 'Wait (see comment)']))
     ]
 
     # Leave only the columns of interest.
@@ -268,7 +268,7 @@ def main():
 
             result = row_value
 
-        return row_value
+        return result
 
     df_2['Customer'] = df_2['Customer'].apply(trim_customer)
 
@@ -296,7 +296,7 @@ def main():
     df_a = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
         (tasks_df['Subject']).str.contains('OUT - mapping') &
-        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)', 'Wait (see comment)']))
         ]
 
     # Leave only the columns of interest.
@@ -343,7 +343,7 @@ def main():
         (tasks_df['Planio Label 1'] == 'Customer') &
         (tasks_df['Subject']).str.contains('IN - mapping') &
         (tasks_df['Priority'] == 'High') &
-        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)', 'Wait (see comment)']))
         ]
 
     # Step 2: keep only columns of interest and fill NaN with "NA, NA".
@@ -378,7 +378,7 @@ def main():
         (tasks_df['Planio Label 1'] == 'Customer') &
         (tasks_df['Subject']).str.contains('OUT - mapping') &
         (tasks_df['Priority'] == 'High') &
-        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)']))
+        (~tasks_df['Status'].isin(['Removed (Closed)', 'Rejected (Closed)', 'Wait (see comment)']))
         ]
 
     # Step 2: keep only columns of interest and fill NaN with "NA, NA".
