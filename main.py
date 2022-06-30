@@ -270,6 +270,7 @@ def main():
 
         return result
 
+    # Trim the column "Customer".
     df_2['Customer'] = df_2['Customer'].apply(trim_customer)
 
     # Step 3:
@@ -365,10 +366,18 @@ def main():
     df_in_less_60 = df_in_less_60[df_in_less_60['% Done'] < 60]
 
     # Leave only one name in the assignee field.
-    df_in_less_60['Assignee'] = df_in_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+    # It might be that there is no "assignee" to tasks under 60% or length = 0.
+    if df_in_less_60.shape[0] == 0:
 
-    # Count number of lines with grouped by assignee (use for graph).
-    df_in_less_60_by_assignee = df_in_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
+        no_assignees_in_less_60 = True
+
+    else:
+
+        no_assignees_in_less_60 = False
+
+        df_in_less_60['Assignee'] = df_in_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+        # Count number of lines with grouped by assignee (use for graph).
+        df_in_less_60_by_assignee = df_in_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
 
     # ---------------------------------------------------------------------------------------------
     # Calculate the data for the graph: OUTBOUND Assignee (critical & <60%).
@@ -578,18 +587,20 @@ def main():
     # )
 
     # MX Assignee IN.
-    my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[6],
-        in_axe_title=f'MX Assignee IN (critical & < 60%)',
-        in_bar_color=BAR_COLOR_DOUBLE,
-        in_x_legend='assignee',
-        in_x_ticks_labels=df_in_less_60_by_assignee.index,
-        in_x_rotation=0,
-        in_y_legend='# tasks',
-        in_y_data=df_in_less_60_by_assignee['% Done'],
-        in_inside_text=f'',
-        in_y_limits=(0, df_in_less_60_by_assignee['% Done'][0] + 1)
-    )
+    if not no_assignees_in_less_60:
+
+        my_dashboard.bar_graph(
+            in_axe=my_dashboard.my_axes[6],
+            in_axe_title=f'MX Assignee IN (critical & < 60%)',
+            in_bar_color=BAR_COLOR_DOUBLE,
+            in_x_legend='assignee',
+            in_x_ticks_labels=df_in_less_60_by_assignee.index,
+            in_x_rotation=0,
+            in_y_legend='# tasks',
+            in_y_data=df_in_less_60_by_assignee['% Done'],
+            in_inside_text=f'',
+            in_y_limits=(0, df_in_less_60_by_assignee['% Done'][0] + 1)
+        )
 
     # ---------------------------------------------------------------------------------------------
     # Display graph in grid position (2, 0)
