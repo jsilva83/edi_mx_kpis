@@ -163,13 +163,32 @@ def main():
     # Cycle each customer item and calculate the average.
     for customer_item in customers_list:
 
+        # Select rows that contain the customer name from an external list.
         customer_item = customer_item.lower()
-        customer_item_df = tasks_df[tasks_df['Subject'].str.contains(customer_item)]
-        customer_item_ds = customer_item_df['% Done']
+
+        if customer_item == 'gm':
+
+            # TODO: If customer is GM it enters in conflict with consignment word for TDK.
+            customer_item_df = tasks_df[tasks_df['Subject'].str.contains(customer_item)]
+            customer_item_df = customer_item_df[~(customer_item_df['Subject'].str.contains('TDK'))]
+
+        else:
+
+            customer_item_df = tasks_df[tasks_df['Subject'].str.contains(customer_item)]
+
+        # From those, select rows that are no in the set {'Rejected (Closed)', 'Removed (Closed)'}.
+        customer_item_df_1 = customer_item_df[~((customer_item_df['Status'] == 'Rejected (Closed)')
+                                                | (customer_item_df['Status'] == 'Removed (Closed)'))]
+
+        # Calculate the average of all pending and open tasks.
+        customer_item_ds = customer_item_df_1['% Done']
+
         average_progress = customer_item_ds.mean()
         graph_6_y.append(round(average_progress))
 
     graph_6_avg = round(sum(graph_6_y) / len(graph_6_y), 1)
+
+    # Calculate the global average.
     global_average = round((graph_1_avg + graph_2_avg + graph_3_avg + graph_4_avg + graph_5_avg) / 5, 1)
 
     # Read the ppt file and get the data.
@@ -406,13 +425,22 @@ def main():
     plan_io_lower_customers = [item.lower() for item in kt.PLAN_IO_CRITICAL_CUSTOMERS_MX]
     df_out_less_60['Customer'] = df_out_less_60['Customer'].str.lower()
     df_out_less_60 = df_out_less_60[df_out_less_60['Customer'].isin(plan_io_lower_customers)]
-    df_out_less_60 = df_out_less_60[df_out_less_60['% Done'] < 60]
 
-    # Leave only one name in the assignee field.
-    df_out_less_60['Assignee'] = df_out_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+    if df_out_less_60.shape[0] == 0:
 
-    # Count number of lines with grouped by assignee (use for graph).
-    df_out_less_60_by_assignee = df_out_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
+        no_assignees_out_less_60 = True
+
+    else:
+
+        no_assignees_out_less_60 = False
+
+        df_out_less_60 = df_out_less_60[df_out_less_60['% Done'] < 60]
+
+        # Leave only one name in the assignee field.
+        df_out_less_60['Assignee'] = df_out_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+
+        # Count number of lines with grouped by assignee (use for graph).
+        df_out_less_60_by_assignee = df_out_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
 
     # ---------------------------------------------------------------------------------------------
     # Start plotting.
@@ -602,6 +630,10 @@ def main():
             in_y_limits=(0, df_in_less_60_by_assignee['% Done'][0] + 1)
         )
 
+    else:
+
+        my_dashboard.make_axe_invisible(my_dashboard.my_axes[6])
+
     # ---------------------------------------------------------------------------------------------
     # Display graph in grid position (2, 0)
 
@@ -639,18 +671,24 @@ def main():
     # )
 
     # MX Assignee OUT.
-    my_dashboard.bar_graph(
-        in_axe=my_dashboard.my_axes[9],
-        in_axe_title=f'MX Assignee OUT (critical & < 60%)',
-        in_bar_color=BAR_COLOR_DOUBLE,
-        in_x_legend='assignee',
-        in_x_ticks_labels=df_out_less_60_by_assignee.index,
-        in_x_rotation=0,
-        in_y_legend='# tasks',
-        in_y_data=df_out_less_60_by_assignee['% Done'],
-        in_inside_text=f'',
-        in_y_limits=(0, df_out_less_60_by_assignee['% Done'][0] + 1)
-    )
+    if not no_assignees_out_less_60:
+
+        my_dashboard.bar_graph(
+            in_axe=my_dashboard.my_axes[9],
+            in_axe_title=f'MX Assignee OUT (critical & < 60%)',
+            in_bar_color=BAR_COLOR_DOUBLE,
+            in_x_legend='assignee',
+            in_x_ticks_labels=df_out_less_60_by_assignee.index,
+            in_x_rotation=0,
+            in_y_legend='# tasks',
+            in_y_data=df_out_less_60_by_assignee['% Done'],
+            in_inside_text=f'',
+            in_y_limits=(0, df_out_less_60_by_assignee['% Done'][0] + 1)
+        )
+
+    else:
+
+        my_dashboard.make_axe_invisible(my_dashboard.my_axes[9])
 
     # Add the traffic light to the image.
     my_dashboard.show_traffic_light(global_average)
