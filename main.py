@@ -170,7 +170,7 @@ def main():
 
             # TODO: If customer is GM it enters in conflict with consignment word for TDK.
             customer_item_df = tasks_df[tasks_df['Subject'].str.contains(customer_item)]
-            customer_item_df = customer_item_df[~(customer_item_df['Subject'].str.contains('TDK'))]
+            customer_item_df = customer_item_df[~(customer_item_df['Subject'].str.contains('tdk'))]
 
         else:
 
