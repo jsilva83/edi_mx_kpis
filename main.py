@@ -99,23 +99,32 @@ def main():
     costumer_in_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
         (tasks_df['Subject'].str.contains('IN - mapping')) &
-        (tasks_df['Status'] != 'Removed (Closed)')
+        (tasks_df['Status'] != 'Removed (Closed)') &
+        (tasks_df['Status'] != 'Rejected (Closed)')
         ]
     customer_in_ds = costumer_in_df['% Done']
     counting_percentages_customer_in_ds = customer_in_ds.value_counts(ascending=True)
+
     if 60 not in counting_percentages_customer_in_ds.index:
+
         counting_percentages_customer_in_ds[60] = 0
+
     graph_2_ds = counting_percentages_customer_in_ds.sort_index()
     graph_2_x = list(graph_2_ds.index)
     graph_2_y = graph_2_ds.values
     graph_2_avg = mf.calculate_average(graph_2_x, graph_2_y)
+
     # Create data for the third graph => Customer OUT (All customers).
     costumer_out_df = tasks_df[
         (tasks_df['Planio Label 1'] == 'Customer') &
-        (tasks_df['Subject'].str.contains('OUT - mapping'))
+        (tasks_df['Subject'].str.contains('OUT - mapping')) &
+        (tasks_df['Status'] != 'Removed (Closed)') &
+        (tasks_df['Status'] != 'Rejected (Closed)')
     ]
+
     customer_out_ds = costumer_out_df['% Done']
     counting_percentages_customer_out_ds = customer_out_ds.value_counts(ascending=True)
+
     if 60 not in counting_percentages_customer_out_ds.index:
         counting_percentages_customer_out_ds[60] = 0
     graph_3_ds = counting_percentages_customer_out_ds.sort_index()
