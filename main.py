@@ -436,11 +436,17 @@ def main():
 
         df_out_less_60 = df_out_less_60[df_out_less_60['% Done'] < 60]
 
-        # Leave only one name in the assignee field.
-        df_out_less_60['Assignee'] = df_out_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+        if df_out_less_60.shape[0] == 0:
 
-        # Count number of lines with grouped by assignee (use for graph).
-        df_out_less_60_by_assignee = df_out_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
+            no_assignees_out_less_60 = True
+
+        else:
+
+            # Leave only one name in the assignee field.
+            df_out_less_60['Assignee'] = df_out_less_60['Assignee'].str.split(pat=', ', expand=True)[1]
+
+            # Count number of lines with grouped by assignee (use for graph).
+            df_out_less_60_by_assignee = df_out_less_60.groupby(by='Assignee').count().sort_values('% Done', ascending=False)
 
     # ---------------------------------------------------------------------------------------------
     # Start plotting.
