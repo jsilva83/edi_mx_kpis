@@ -16,7 +16,6 @@ PLAN_IO_QUERY_CUSTOMERS_MX = [
     'FlexNGate',
     'MBUSI',
     'PLASTIC',
-    'Polycon',
     'SRG',
     'STRATTEC',
     'Ventra',

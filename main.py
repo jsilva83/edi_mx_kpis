@@ -76,14 +76,18 @@ def main():
 
     # Calculate unique values counting.
     counting_percentages_comm_setup_ds = comm_setup_all_suppliers_ds.value_counts(ascending=True)
+
     # Add index 60 if it does not exist in the series index.
     if 60 not in counting_percentages_comm_setup_ds.index:
+
         counting_percentages_comm_setup_ds[60] = 0
 
-    # Sort index to make sure it in ascending order.
+    # Sort index to make sure it is in ascending order.
     graph_1_ds = counting_percentages_comm_setup_ds.sort_index()
+
     # Axis 'X' values.
     graph_1_x = list(graph_1_ds.index)
+
     # Axis 'Y' values.
     graph_1_y = list(graph_1_ds.values)
     graph_1_avg = mf.calculate_average(graph_1_x, graph_1_y)
